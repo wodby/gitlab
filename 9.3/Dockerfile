@@ -87,7 +87,6 @@ RUN mkdir -p ${GITLAB_DIR} && \
     wget -qO- ${GITLAB_URL} | tar xz --strip-components=1 -C ${GITLAB_DIR} && \
     chown -R git:git ${GITLAB_DIR}
 
-## https://github.com/google/protobuf/issues/2335
 RUN cd ${GITLAB_DIR} && \
     chown -R git:git /usr/local/lib/ruby/gems/2.3.0/ && \
     chown -R git:git /usr/local/bundle/ && \
