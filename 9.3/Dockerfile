@@ -42,7 +42,7 @@ RUN set -xe && \
         libc6-compat \
         libressl \
         make \
-        mariadb-client
+        mariadb-client \
         nodejs \
         openssh \
         postgresql-client \
