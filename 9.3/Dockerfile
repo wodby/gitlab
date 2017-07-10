@@ -39,55 +39,58 @@ RUN set -xe && \
         ca-certificates \
         git \
         gzip \
-        make \
+        libc6-compat \
         libressl \
+        make \
+        mariadb-client
         nodejs \
         openssh \
         postgresql-client \
         python2 \
-        libc6-compat \
         su-exec \
         tar \
         wget \
-        yarn \
-        mariadb-client
+        yarn
 
 RUN apk add --update --no-cache --virtual .gitlab-build-deps \
         autoconf \
-        cmake \
         build-base \
+        cmake \
         coreutils \
         g++ \
         gdbm-dev \
         go \
         icu-dev \
         libffi-dev \
+        libressl-dev \
+        libgcrypt-dev \
         libxml2-dev \
         libxslt-dev \
+        linux-headers \
+        mariadb-dev \
         ncurses-dev \
-        libressl-dev \
         patch \
         postgresql-dev \
         readline-dev \
+        sqlite-dev \
         yaml-dev \
-        zlib-dev \
-        mariadb-dev \
-        linux-headers \
-        libgcrypt-dev \
-        sqlite-dev
+        zlib-dev
 
     # Install Gotpl
-RUN wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin
+RUN wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin && \
 
-RUN git config --global core.autocrlf input && \
+    git config --global core.autocrlf input && \
     git config --global gc.auto 0 && \
-    git config --global repack.writeBitmaps true
+    git config --global repack.writeBitmaps true && \
 
-RUN mkdir -p ${GITLAB_DIR} && \
+    # Download GitLab
+    mkdir -p ${GITLAB_DIR} && \
     wget -qO- ${GITLAB_URL} | tar xz --strip-components=1 -C ${GITLAB_DIR} && \
-    chown -R git:git ${GITLAB_DIR}
+    chown -R git:git ${GITLAB_DIR} && \
 
-RUN cd ${GITLAB_DIR} && \
+    cd ${GITLAB_DIR} && \
     chown -R git:git /usr/local/lib/ruby/gems/2.3.0/ && \
     chown -R git:git /usr/local/bundle/ && \
+
+    # Install gems
     su-exec git bundle install -j$(nproc) --deployment --verbose --without development aws kerberos
