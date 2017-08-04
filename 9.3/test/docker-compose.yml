@@ -1,0 +1,89 @@
+version: '2'
+
+services:
+  redis:
+    image: wodby/redis
+
+  postgres:
+    image: wodby/postgres:9.6
+    environment:
+    - POSTGRES_USER=gitlab
+    - POSTGRES_PASSWORD=gitlab
+    - POSTGRES_DB=gitlab
+    - POSTGRES_DB_EXTENSIONS=pg_trgm
+
+  gitaly:
+    image: wodby/gitaly
+    environment:
+      - DEBUG=true
+
+  gitlab:
+    image: $IMAGE
+    depends_on:
+      - redis
+      - postgres
+      - gitaly
+    environment:
+      - GITLAB_ROOT_PASSWORD=password
+      - GITLAB_ROOT_EMAIL=admin@example.com
+      - DEBUG=true
+      - DB_ADAPTER=postgresql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=gitlab
+      - DB_PASS=gitlab
+      - DB_NAME=gitlab
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - data:/mnt/data
+
+  workhorse:
+    image: $IMAGE
+    depends_on:
+      - gitlab
+    environment:
+      - DEBUG=true
+    command: /etc/init.d/workhorsed
+    volumes:
+      - data:/mnt/data
+
+  sidekiq:
+    image: $IMAGE
+    depends_on:
+      - gitlab
+    environment:
+      - DEBUG=true
+    command: /etc/init.d/sidekiqd
+
+  mailroom:
+    image: $IMAGE
+    depends_on:
+      - gitlab
+    environment:
+      - DEBUG=true
+    command: /etc/init.d/mailroomd
+
+  crond:
+    image: $IMAGE
+    depends_on:
+      - gitlab
+    environment:
+      - DEBUG=true
+    command: crond -f -d 8
+
+  nginx:
+    image: wodby/gitlab-nginx
+    depends_on:
+      - workhorse
+    ports:
+      - "8000:80"
+    environment:
+      - DEBUG=true
+      - NGINX_BACKEND_HOST=workhorse
+      - NGINX_BACKEND_PORT=8181
+    volumes:
+      - data:/mnt/data
+
+volumes:
+  data:
