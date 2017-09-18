@@ -8,9 +8,9 @@ services:
 env:
   global:
     - DOCKER_COMPOSE_VERSION=1.11.2
-    - LATEST_VERSION=9.3
+    - LATEST_VERSION=9.5
   matrix:
-    - VERSION=9.3
+    - VERSION=9.5
 
 install:
   - sudo rm /usr/local/bin/docker-compose

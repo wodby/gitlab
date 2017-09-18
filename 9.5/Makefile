@@ -1,9 +1,9 @@
 -include env_make
 
-VERSION ?= 9.3
+VERSION ?= 9.5
 
 REPO = wodby/gitlab
-NAME = gitlab-9.3
+NAME = gitlab-9.5
 
 .PHONY: build test push shell run start stop logs clean release
 
@@ -13,7 +13,7 @@ build:
 	docker build -t $(REPO):$(VERSION) ./
 
 test:
-	IMAGE=$(REPO):$(VERSION) ./test.sh
+	IMAGE=$(REPO):$(VERSION) IMAP_EMAIL=$(IMAP_EMAIL) IMAP_PASS=$(IMAP_PASS) ./test.sh
 
 push:
 	docker push $(REPO):$(VERSION)

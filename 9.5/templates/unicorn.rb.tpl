@@ -22,7 +22,7 @@
 # Read about unicorn workers here:
 # http://doc.gitlab.com/ee/install/requirements.html#unicorn-workers
 #
-worker_processes 3
+worker_processes {{ getenv "GITLAB_UNICORN_WORKER_PROCESSES" "3" }}
 
 # Since Unicorn is never exposed to outside clients, it does not need to
 # run on the standard HTTP port (80), there is no reason to start Unicorn
@@ -38,7 +38,6 @@ working_directory "/home/git/gitlab" # available in 0.94.0+
 # Listen on both a Unix domain socket and a TCP port.
 # If you are load-balancing multiple Unicorn masters, lower the backlog
 # setting to e.g. 64 for faster failover.
-listen "/home/git/gitlab/tmp/sockets/gitlab.socket", :backlog => 1024
 listen "0.0.0.0:8080", :tcp_nopush => true
 
 # nuke workers after 30 seconds instead of 60 seconds (the default)
@@ -56,7 +55,7 @@ listen "0.0.0.0:8080", :tcp_nopush => true
 #
 # For more information see http://stackoverflow.com/a/21682112/752049
 #
-timeout 60
+timeout {{ getenv "GITLAB_UNICORN_TIMEOUT" "60" }}
 
 # feel free to point this anywhere accessible on the filesystem
 pid "/home/git/gitlab/tmp/pids/unicorn.pid"

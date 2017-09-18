@@ -50,6 +50,8 @@ production: &base
     # Customize if you have GitLab behind a reverse proxy which is running on a different machine.
     # Add the IP address for your reverse proxy to the list, otherwise users will appear signed in from that address.
     trusted_proxies:
+      - 172.17.0.0/16
+      - 172.18.0.0/16
       # Examples:
       #- 192.168.1.0/24
       #- 192.168.2.1
@@ -453,7 +455,7 @@ production: &base
     # Default Gitaly authentication token. Can be overriden per storage. Can
     # be left blank when Gitaly is running locally on a Unix socket, which
     # is the normal way to deploy Gitaly.
-    token:
+     enabled: true
 
   #
   # 4. Advanced settings
@@ -502,7 +504,7 @@ production: &base
 
     # File that contains the secret key for verifying access for gitlab-shell.
     # Default is '.gitlab_shell_secret' relative to Rails.root (i.e. root of the GitLab app).
-    # secret_file: /home/git/gitlab/.gitlab_shell_secret
+    secret_file: /mnt/data/.secrets/gitlab_shell_secret
 
     # Git over HTTP
     upload_pack: true
@@ -512,12 +514,12 @@ production: &base
     # git_timeout: 800
 
     # If you use non-standard ssh port you need to specify it
-    # ssh_port: 22
+    ssh_port: {{ getenv "GITLAB_SHELL_SSH_PORT" "22" }}
 
   workhorse:
     # File that contains the secret key for verifying access for gitlab-workhorse.
     # Default is '.gitlab_workhorse_secret' relative to Rails.root (i.e. root of the GitLab app).
-    # secret_file: /home/git/gitlab/.gitlab_workhorse_secret
+    secret_file: /mnt/data/.secrets/gitlab_workhorse_secret
 
   ## Git settings
   # CAUTION!
@@ -549,6 +551,7 @@ production: &base
     # IP whitelist to access monitoring endpoints
     ip_whitelist:
       - 127.0.0.0/8
+      - 172.17.0.0/16
 
   #
   # 5. Extra customization

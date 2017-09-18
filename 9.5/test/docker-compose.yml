@@ -16,6 +16,8 @@ services:
     image: wodby/gitaly
     environment:
       - DEBUG=true
+    volumes:
+      - data:/mnt/data
 
   gitlab:
     image: $IMAGE
@@ -24,9 +26,11 @@ services:
       - postgres
       - gitaly
     environment:
+      - DEBUG=true
+      - GITLAB_LOG_LEVEL=debug
+      - GITLAB_SHELL_LOG_LEVEL=debug
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
-      - DEBUG=true
       - DB_ADAPTER=postgresql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -39,12 +43,12 @@ services:
       - data:/mnt/data
 
   workhorse:
-    image: $IMAGE
+    image: wodby/gitlab-workhorse
     depends_on:
       - gitlab
+      - redis
     environment:
       - DEBUG=true
-    command: /etc/init.d/workhorsed
     volumes:
       - data:/mnt/data
 
@@ -54,34 +58,58 @@ services:
       - gitlab
     environment:
       - DEBUG=true
+      - GITLAB_LOG_LEVEL=debug
+      - GITLAB_SHELL_LOG_LEVEL=debug
+      - GITLAB_ROOT_PASSWORD=password
+      - GITLAB_ROOT_EMAIL=admin@example.com
+      - DB_ADAPTER=postgresql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=gitlab
+      - DB_PASS=gitlab
+      - DB_NAME=gitlab
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     command: /etc/init.d/sidekiqd
+    volumes:
+      - data:/mnt/data
 
-  mailroom:
+  sshd:
     image: $IMAGE
     depends_on:
       - gitlab
     environment:
+      - RUBYOPT=--disable-gems
       - DEBUG=true
-    command: /etc/init.d/mailroomd
-
-  crond:
-    image: $IMAGE
-    depends_on:
-      - gitlab
-    environment:
-      - DEBUG=true
-    command: crond -f -d 8
+      - GITLAB_LOG_LEVEL=debug
+      - GITLAB_SHELL_LOG_LEVEL=debug
+      - GITLAB_INCOMING_EMAIL=true
+      - GITLAB_INCOMING_EMAIL_USER=$IMAP_EMAIL
+      - GITLAB_INCOMING_EMAIL_PASSWORD=$IMAP_PASS
+      - GITLAB_ROOT_PASSWORD=password
+      - GITLAB_ROOT_EMAIL=admin@example.com
+      - DB_ADAPTER=postgresql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=gitlab
+      - DB_PASS=gitlab
+      - DB_NAME=gitlab
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    command: sudo /usr/sbin/sshd -De
+    ports:
+      - "22:22"
+    volumes:
+      - data:/mnt/data
 
   nginx:
     image: wodby/gitlab-nginx
     depends_on:
       - workhorse
     ports:
-      - "8000:80"
+      - "80:80"
     environment:
       - DEBUG=true
-      - NGINX_BACKEND_HOST=workhorse
-      - NGINX_BACKEND_PORT=8181
     volumes:
       - data:/mnt/data
 
