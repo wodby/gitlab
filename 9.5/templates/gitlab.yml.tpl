@@ -51,7 +51,6 @@ production: &base
     # Add the IP address for your reverse proxy to the list, otherwise users will appear signed in from that address.
     trusted_proxies:
       - 172.17.0.0/16
-      - 172.18.0.0/16
       # Examples:
       #- 192.168.1.0/24
       #- 192.168.2.1
@@ -499,12 +498,12 @@ production: &base
 
   ## GitLab Shell settings
   gitlab_shell:
-    path: /home/git/gitlab-shell/
-    hooks_path: /home/git/gitlab-shell/hooks/
+    path: {{ getenv "GITLAB_SHELL_DIR" }}
+    hooks_path: {{ getenv "GITLAB_SHELL_DIR" }}/hooks/
 
     # File that contains the secret key for verifying access for gitlab-shell.
     # Default is '.gitlab_shell_secret' relative to Rails.root (i.e. root of the GitLab app).
-    secret_file: /mnt/data/.secrets/gitlab_shell_secret
+    secret_file: {{ getenv "GITLAB_DIR" }}/.gitlab_shell_secret
 
     # Git over HTTP
     upload_pack: true
@@ -519,7 +518,7 @@ production: &base
   workhorse:
     # File that contains the secret key for verifying access for gitlab-workhorse.
     # Default is '.gitlab_workhorse_secret' relative to Rails.root (i.e. root of the GitLab app).
-    secret_file: /mnt/data/.secrets/gitlab_workhorse_secret
+    secret_file: {{ getenv "GITLAB_DIR" }}/.gitlab_workhorse_secret
 
   ## Git settings
   # CAUTION!

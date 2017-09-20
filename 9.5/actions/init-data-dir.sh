@@ -11,7 +11,7 @@ chmod 755 "${GITLAB_DATA_DIR}"
 
 # Public
 if [[ ! -d "${GITLAB_PUBLIC_DIR}" ]]; then
-    mv "${GITLAB_DIR}/public/" "${GITLAB_PUBLIC_DIR}"
+    rsync -rlt "${GITLAB_DIR}/public/" "${GITLAB_PUBLIC_DIR}"
 fi
 
 if [[ ! -L "${GITLAB_DIR}/public" ]]; then
@@ -63,27 +63,3 @@ fi
 
 # Backups
 mkdir -p "${GITLAB_BACKUP_DIR}"
-
-# SSH
-mkdir -p "${GITLAB_DATA_DIR}/.ssh"
-touch "${GITLAB_DATA_DIR}/.ssh/authorized_keys"
-chmod 700 "${GITLAB_DATA_DIR}/.ssh"
-chmod 600 "${GITLAB_DATA_DIR}/.ssh/authorized_keys"
-
-# Gitlab shell secret
-if [[ -z "${GITLAB_SHELL_SECRET}" ]]; then
-    openssl rand -hex -out "${GITLAB_DATA_DIR}/.secrets/gitlab_shell_secret" 16
-else
-    echo "${GITLAB_SHELL_SECRET}" > "${GITLAB_DATA_DIR}/.secrets/gitlab_shell_secret"
-fi
-
-chmod 600 "${GITLAB_DATA_DIR}/.secrets/gitlab_shell_secret"
-
-# Workhorse secret
-if [[ -z "${GITLAB_WORKHORSE_SECRET}" ]]; then
-    openssl rand -base64 -out "${GITLAB_DATA_DIR}/.secrets/gitlab_workhorse_secret" 32
-else
-    echo "${GITLAB_WORKHORSE_SECRET}" > "${GITLAB_DATA_DIR}/.secrets/gitlab_workhorse_secret"
-fi
-
-chmod 600 "${GITLAB_DATA_DIR}/.secrets/gitlab_workhorse_secret"

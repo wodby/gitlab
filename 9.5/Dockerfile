@@ -1,7 +1,7 @@
 FROM wodby/ruby:2.3.5
 
 ENV GOTPL_VER="0.1.5" \
-    GITLAB_VER="9.5.4" \
+    GITLAB_VER="9.5.5" \
     GITLAB_DATA_DIR="/mnt/data" \
     RAILS_ENV="production" \
     NODE_ENV="production" \
@@ -28,6 +28,7 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_REGISTRY_DIR="${GITLAB_DATA_DIR}/shared/registry" \
     GITLAB_ARTIFACTS_DIR="${GITLAB_DATA_DIR}/shared/artifacts" \
 
+    # TODO: cleanup
     GITLAB_URL="${_BASE_DL_URL}/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
     GITLAB_SHELL_URL="${_BASE_DL_URL}/gitlab-shell/repository/archive.tar.gz?ref=v" \
     GITLAB_GITALY_URL="${_BASE_DL_URL}/gitaly/repository/archive.tar.gz?ref=v" \
@@ -48,6 +49,7 @@ RUN set -xe && \
         gzip \
         icu-libs \
         libc6-compat \
+        libre2 \
         libressl \
         make \
         mariadb-client \
@@ -55,6 +57,7 @@ RUN set -xe && \
         openssh \
         postgresql-client \
         python2 \
+        # TODO: move out
         redis \
         su-exec \
         sudo \
@@ -88,41 +91,62 @@ RUN set -xe && \
         yaml-dev \
         zlib-dev
 
-    # Download GitLab
 RUN mkdir -p ${GITLAB_DIR} && \
     wget -qO- ${GITLAB_URL} | tar xz --strip-components=1 -C ${GITLAB_DIR} && \
     chown -R git:git ${GITLAB_DIR} && \
-    cd ${GITLAB_DIR} && \
-    chown -R git:git /usr/local/lib/ruby/gems/2.3.0/ && \
-    chown -R git:git /usr/local/bundle/
 
-    # Install gems
+    cd ${GITLAB_DIR} && \
+    su-exec git cp config/database.yml.postgresql config/database.yml && \
+    su-exec git cp config/gitlab.yml.example config/gitlab.yml
+
+    # Install gems.
 RUN cd ${GITLAB_DIR} && \
+    chown -R git:git /usr/local/lib/ruby/gems/2.3.0/ && \
+    chown -R git:git /usr/local/bundle/ && \
+
+    # Build gems from source
     export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
     su-exec git bundle install -j$(nproc) --deployment --verbose --without development aws kerberos
 
 RUN cd ${GITLAB_DIR} && \
-    su-exec git cp config/database.yml.postgresql config/database.yml && \
-    su-exec git cp config/gitlab.yml.example config/gitlab.yml && \
-    su-exec git bundle exec rake gitlab:shell:install \
-        REDIS_URL=redis:6379 RAILS_ENV=production SKIP_STORAGE_VALIDATION=true
+    # Gitlab shell
+    su-exec git bundle exec rake gitlab:shell:install REDIS_URL=redis:6379 SKIP_STORAGE_VALIDATION=true && \
 
-RUN cd ${GITLAB_DIR} && \
-    su-exec git bundle exec rake "gitlab:workhorse:install[/home/git/gitlab-workhorse]" RAILS_ENV=production
+    # Workhorse
+    su-exec git bundle exec rake "gitlab:workhorse:install[/home/git/gitlab-workhorse]" && \
 
-RUN cd ${GITLAB_DIR} && \
-    # TODO: add RAILS_ENV=production
-    su-exec git bundle exec rake "gitlab:gitaly:install[/home/git/gitaly]"
+    # Gitaly
+    # Build gems from source
+    export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
+    su-exec git bundle exec rake "gitlab:gitaly:install[/home/git/gitaly]" && \
 
-RUN cd ${GITLAB_DIR} && \
+    # PO files
     su-exec git bundle exec rake gettext:pack && \
     su-exec git bundle exec rake gettext:po_to_json
 
+    # Compile assets
 RUN cd ${GITLAB_DIR} && \
     su-exec git yarn install --production --pure-lockfile && \
-    su-exec git bundle exec rake gitlab:assets:compile RAILS_ENV=production NODE_ENV=production
+    su-exec git bundle exec rake gitlab:assets:compile && \
 
-RUN wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin && \
+    wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin
+
+#RUN set -ex && \
+#    rm -rf ${GITLAB_GITALY_DIR} && \
+#    mkdir -p ${GITLAB_GITALY_DIR} && \
+#    gitaly_version=$(cat "${GITLAB_DIR}/GITALY_SERVER_VERSION") && \
+#    wget -qO- "${GITLAB_GITALY_URL}${gitaly_version}" | tar xz --strip-components=1 -C ${GITLAB_GITALY_DIR} && \
+#    cd ${GITLAB_GITALY_DIR} && \
+#    make install && \
+#    make clean
+#
+#RUN chown -R git:git ${GITLAB_GITALY_DIR}
+
+RUN cd ${GITLAB_DIR} && \
+
+    cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb && \
+    rm config/secrets.yml && \
+
     su-exec git sed -i 's/db:reset/db:setup/' ${GITLAB_DIR}/lib/tasks/gitlab/setup.rake && \
 
     # Configure git
@@ -131,13 +155,7 @@ RUN wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin && \
     git config --global repack.writeBitmaps true && \
 
     # Leave only redis-cli from redis package
-    cp /usr/bin/redis-cli /tmp && \
-    mv /tmp/redis-cli /usr/bin && \
-
-    # WORKAROUND for https://github.com/sameersbn/docker-gitlab/issues/509
-    rm -rf ${GITLAB_DIR}/builds && \
-    rm -rf ${GITLAB_DIR}/shared && \
-
+    cp /usr/bin/redis-cli /usr/bin/redis && \
     ln -s /usr/local/bin/ruby /usr/bin/ && \
 
     # SSHd config
@@ -158,17 +176,16 @@ RUN wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin && \
         echo "sudo chown git:git ${GITLAB_SHELL_DIR}/config.yml" ; \
     } | tee /usr/local/bin/gitlab-fix-permissions.sh && \
     chmod +x /usr/local/bin/gitlab-fix-permissions.sh && \
-    echo 'git ALL=(root) NOPASSWD: /usr/local/bin/gitlab-fix-permissions.sh' > /etc/sudoers.d/git && \
+    echo 'git ALL=(root) NOPASSWD: /usr/local/bin/gitlab-fix-permissions.sh, /usr/sbin/sshd' > /etc/sudoers.d/git && \
 
     rm -rf "/home/git/.ssh" && \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh" && \
 
     # Prepare directories
-    touch /etc/init.d/sidekiqd /etc/init.d/mailroomd && \
-    mkdir -p ${GITLAB_DxIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
-    chown git:git /etc/init.d/sidekiqd /etc/init.d/mailroomd ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/
+    mkdir -p ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
+    chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ && \
 
-RUN apk del .gitlab-build-deps && \
+    apk del --purge .gitlab-build-deps && \
     apk del --purge redis
 
 VOLUME ${GITLAB_DATA_DIR}
@@ -177,7 +194,6 @@ WORKDIR ${GITLAB_DIR}
 
 COPY templates /etc/gotpl
 COPY docker-entrypoint.sh /
-COPY init /docker-entrypoint-init.d/
 COPY actions /usr/local/bin/
 
 USER git

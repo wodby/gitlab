@@ -1,6 +1,18 @@
 version: '2'
 
 services:
+
+  nginx:
+    image: wodby/gitlab-nginx
+    depends_on:
+      - workhorse
+    ports:
+      - "80:80"
+    environment:
+      - DEBUG=true
+    volumes:
+      - data:/mnt/data
+
   redis:
     image: wodby/redis
 
@@ -12,13 +24,6 @@ services:
     - POSTGRES_DB=gitlab
     - POSTGRES_DB_EXTENSIONS=pg_trgm
 
-  gitaly:
-    image: wodby/gitaly
-    environment:
-      - DEBUG=true
-    volumes:
-      - data:/mnt/data
-
   gitlab:
     image: $IMAGE
     depends_on:
@@ -28,7 +33,6 @@ services:
     environment:
       - DEBUG=true
       - GITLAB_LOG_LEVEL=debug
-      - GITLAB_SHELL_LOG_LEVEL=debug
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
       - DB_ADAPTER=postgresql
@@ -39,16 +43,42 @@ services:
       - DB_NAME=gitlab
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
+      # openssl rand -hex 16
+      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      # openssl rand -base64 32
+      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+#    command: bundle exec unicorn_rails -c config/unicorn.rb -E production -d
+    expose:
+      - "8080"
+    volumes:
+      - data:/mnt/data
+
+  gitaly:
+    image: $IMAGE
+    environment:
+      - DEBUG=true
+    working_dir: /home/git/gitaly
+    command: /etc/init.d/gitaly
+    expose:
+      - "9999"
     volumes:
       - data:/mnt/data
 
   workhorse:
-    image: wodby/gitlab-workhorse
+    image: $IMAGE
     depends_on:
       - gitlab
       - redis
     environment:
       - DEBUG=true
+      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+    working_dir: /home/git/gitlab-workhorse
+    command: /etc/init.d/workhorse
+    expose:
+      - "8181"
     volumes:
       - data:/mnt/data
 
@@ -59,7 +89,6 @@ services:
     environment:
       - DEBUG=true
       - GITLAB_LOG_LEVEL=debug
-      - GITLAB_SHELL_LOG_LEVEL=debug
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
       - DB_ADAPTER=postgresql
@@ -70,7 +99,14 @@ services:
       - DB_NAME=gitlab
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    command: /etc/init.d/sidekiqd
+      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
+      # openssl rand -hex 16
+      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      # openssl rand -base64 32
+      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+    command: /etc/init.d/sidekiq
     volumes:
       - data:/mnt/data
 
@@ -83,33 +119,14 @@ services:
       - DEBUG=true
       - GITLAB_LOG_LEVEL=debug
       - GITLAB_SHELL_LOG_LEVEL=debug
-      - GITLAB_INCOMING_EMAIL=true
-      - GITLAB_INCOMING_EMAIL_USER=$IMAP_EMAIL
-      - GITLAB_INCOMING_EMAIL_PASSWORD=$IMAP_PASS
-      - GITLAB_ROOT_PASSWORD=password
-      - GITLAB_ROOT_EMAIL=admin@example.com
-      - DB_ADAPTER=postgresql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=gitlab
-      - DB_PASS=gitlab
-      - DB_NAME=gitlab
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - GITLAB_SHELL_REDIS_HOST=redis
+      - GITLAB_SHELL_REDIS_PORT=6379
+      # openssl rand -hex 16
+      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+    working_dir: /home/git/gitlab-shell
     command: sudo /usr/sbin/sshd -De
     ports:
       - "22:22"
-    volumes:
-      - data:/mnt/data
-
-  nginx:
-    image: wodby/gitlab-nginx
-    depends_on:
-      - workhorse
-    ports:
-      - "80:80"
-    environment:
-      - DEBUG=true
     volumes:
       - data:/mnt/data
 

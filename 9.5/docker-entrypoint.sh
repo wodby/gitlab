@@ -11,6 +11,11 @@ exec_tpl() {
 }
 
 init_sshd() {
+    mkdir -p "${GITLAB_DATA_DIR}/.ssh"
+    touch "${GITLAB_DATA_DIR}/.ssh/authorized_keys"
+    chmod 700 "${GITLAB_DATA_DIR}/.ssh"
+    chmod 600 "${GITLAB_DATA_DIR}/.ssh/authorized_keys"
+
     # Make sure ~/.ssh symlink won't be broken.
     mkdir -p "${GITLAB_DATA_DIR}/.ssh"
 
@@ -39,26 +44,44 @@ init_sshd() {
     fi
 }
 
+process_templates() {
+    exec_tpl "unicorn.rb.tpl" "${GITLAB_DIR}/config/unicorn.rb"
+    exec_tpl "production.rb.tpl" "${GITLAB_DIR}/config/environments/production.rb"
+    exec_tpl "smtp_settings.rb.tpl" "${GITLAB_DIR}/config/initializers/smtp_settings.rb"
+
+    exec_tpl "database.yml.tpl" "${GITLAB_DIR}/config/database.yml"
+    exec_tpl "gitaly.toml.tpl" "${GITLAB_GITALY_DIR}/config.toml"
+    exec_tpl "gitlab.yml.tpl" "${GITLAB_DIR}/config/gitlab.yml"
+    exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
+    exec_tpl "resque.yml.tpl" "${GITLAB_DIR}/config/resque.yml"
+    exec_tpl "secrets.yml.tpl" "${GITLAB_DIR}/config/secrets.yml"
+    exec_tpl "workhorse.toml.tpl" "${GITLAB_WORKHORSE_DIR}/config.toml"
+
+    exec_tpl "init.d/gitaly.tpl" "/etc/init.d/gitaly"
+    exec_tpl "init.d/mailroom.tpl" "/etc/init.d/mailroom"
+    exec_tpl "init.d/sidekiq.tpl" "/etc/init.d/sidekiq"
+    exec_tpl "init.d/workhorse.tpl" "/etc/init.d/workhorse"
+}
+
+process_secrets() {
+    if [[ -n "${GITLAB_SECRETS_SHELL}" ]]; then
+        echo "${GITLAB_SECRETS_SHELL}" > "${GITLAB_DIR}/.gitlab_shell_secret"
+        chmod 600 "${GITLAB_DIR}/.gitlab_shell_secret"
+    fi
+
+    if [[ -n "${GITLAB_SECRETS_WORKHORSE}" ]]; then
+        echo "${GITLAB_SECRETS_WORKHORSE}" > "${GITLAB_DIR}/.gitlab_workhorse_secret"
+        chmod 600 "${GITLAB_DIR}/.gitlab_workhorse_secret"
+    fi
+}
+
 sudo gitlab-fix-permissions.sh
 
-exec_tpl "unicorn.rb.tpl" "${GITLAB_DIR}/config/unicorn.rb"
-exec_tpl "production.rb.tpl" "${GITLAB_DIR}/config/environments/production.rb"
-exec_tpl "smtp_settings.rb.tpl" "${GITLAB_DIR}/config/initializers/smtp_settings.rb"
+process_templates
+process_secrets
 
-exec_tpl "gitlab.yml.tpl" "${GITLAB_DIR}/config/gitlab.yml"
-exec_tpl "database.yml.tpl" "${GITLAB_DIR}/config/database.yml"
-exec_tpl "resque.yml.tpl" "${GITLAB_DIR}/config/resque.yml"
-exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
-
-exec_tpl "sidekiqd.tpl" "/etc/init.d/sidekiqd"
-exec_tpl "mailroomd.tpl" "/etc/init.d/mailroomd"
-
-mkdir -p "${GITLAB_DATA_DIR}/.secrets"
-touch "${GITLAB_DATA_DIR}/.secrets/gitlab_shell_secret"
-touch "${GITLAB_DATA_DIR}/.secrets/gitlab_workhorse_secret"
-
-chmod +x /etc/init.d/sidekiqd
-chmod +x /etc/init.d/mailroomd
+chmod +x /etc/init.d/*
+mkdir -p "${GITLAB_REPOS_DIR}"
 
 if [[ $1 == "make" ]]; then
     exec "${@}" -f /usr/local/bin/actions.mk

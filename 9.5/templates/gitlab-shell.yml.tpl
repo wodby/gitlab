@@ -29,7 +29,7 @@ auth_file: "/home/git/.ssh/authorized_keys"
 
 # File that contains the secret key for verifying access to GitLab.
 # Default is .gitlab_shell_secret in the gitlab-shell directory.
-secret_file: "/mnt/data/.secrets/gitlab_shell_secret"
+secret_file: "{{ getenv "GITLAB_DIR" }}/.gitlab_shell_secret"
 
 # Parent directory for global custom hook directories (pre-receive.d, update.d, post-receive.d)
 # Default is hooks in the gitlab-shell directory.
