@@ -50,12 +50,12 @@ process_templates() {
     exec_tpl "smtp_settings.rb.tpl" "${GITLAB_DIR}/config/initializers/smtp_settings.rb"
 
     exec_tpl "database.yml.tpl" "${GITLAB_DIR}/config/database.yml"
-    exec_tpl "gitaly.toml.tpl" "${GITLAB_GITALY_DIR}/config.toml"
+    exec_tpl "gitaly.toml.tpl" "${GITLAB_DIR}/gitaly.toml"
     exec_tpl "gitlab.yml.tpl" "${GITLAB_DIR}/config/gitlab.yml"
     exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
     exec_tpl "resque.yml.tpl" "${GITLAB_DIR}/config/resque.yml"
     exec_tpl "secrets.yml.tpl" "${GITLAB_DIR}/config/secrets.yml"
-    exec_tpl "workhorse.toml.tpl" "${GITLAB_WORKHORSE_DIR}/config.toml"
+    exec_tpl "workhorse.toml.tpl" "${GITLAB_DIR}/workhorse.toml"
 
     exec_tpl "init.d/gitaly.tpl" "/etc/init.d/gitaly"
     exec_tpl "init.d/mailroom.tpl" "/etc/init.d/mailroom"

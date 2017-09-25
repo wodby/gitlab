@@ -6,4 +6,4 @@ if [[ -n "${DEBUG}" ]]; then
     set -x
 fi
 
-exec "${GITLAB_GITALY_DIR}/gitaly" "${GITLAB_GITALY_DIR}/config.toml"
+exec gitaly gitaly.toml

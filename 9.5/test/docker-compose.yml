@@ -70,7 +70,6 @@ services:
     image: $IMAGE
     environment:
       - DEBUG=true
-    working_dir: /home/git/gitaly
     command: /etc/init.d/gitaly
     expose:
       - "9999"
@@ -88,7 +87,6 @@ services:
       - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
       # openssl rand -hex 16
       - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
-    working_dir: /home/git/gitlab-workhorse
     command: /etc/init.d/workhorse
     expose:
       - "8181"

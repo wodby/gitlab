@@ -25,7 +25,7 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_ARTIFACTS_DIR="${GITLAB_DATA_DIR}/shared/artifacts" \
 
     GITLAB_URL="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
-    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz?ref=v" \
+    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz" \
     GOTPL_URL="https://github.com/wodby/gotpl/releases/download/${GOTPL_VER}/gotpl-alpine-linux-amd64-${GOTPL_VER}.tar.gz"
 
 RUN set -xe && \
@@ -106,26 +106,30 @@ RUN mkdir -p ${GITLAB_DIR} && \
 
     # PO files
     su-exec git bundle exec rake gettext:pack && \
-    su-exec git bundle exec rake gettext:po_to_json
+    su-exec git bundle exec rake gettext:po_to_json && \
 
     # Install gitlab shell.
-RUN cd ${GITLAB_DIR} && \
     su-exec git bundle exec rake gitlab:shell:install REDIS_URL=redis:6379 SKIP_STORAGE_VALIDATION=true && \
 
     # Install gitlab pages.
-    wget -qO- ${GITLAB_PAGES_URL} | tar xz --strip-components=1 -C /tmp/gitlab-pages && \
-    cd /tmp/gitlab-pages && \
+    gitlab_pages_version=$(cat "${GITLAB_DIR}/GITLAB_PAGES_VERSION") && \
+    wget -qO- "${GITLAB_PAGES_URL}?ref=v${gitlab_pages_version}" | tar xz -C /tmp/ && \
+    export GOPATH="/tmp/go" && \
+    mkdir -p "/tmp/go/src/gitlab.com/gitlab-org" && \
+    ln -s /tmp/gitlab-pages* "$GOPATH/src/gitlab.com/gitlab-org/gitlab-pages" && \
+    cd "$GOPATH/src/gitlab.com/gitlab-org/gitlab-pages" && \
     make && \
     mv gitlab-pages /usr/local/bin && \
 
     # Install workhorse
+    cd ${GITLAB_DIR} && \
     su-exec git bundle exec rake "gitlab:workhorse:install[/tmp/workhorse]" && \
-    mv /tmp/gitlab-workhorse /usr/local/bin && \
+    mv /tmp/workhorse/gitlab-workhorse /usr/local/bin && \
 
     # Install gitaly (build gems from source)
     export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
     su-exec git bundle exec rake "gitlab:gitaly:install[/tmp/gitaly]" && \
-    mv /tmp/gitaly/gitaly-ruby /home/git/gitaly-ruby && \
+    mv /tmp/gitaly/ruby /home/git/gitaly-ruby && \
 
     # Gotpl
     wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin && \

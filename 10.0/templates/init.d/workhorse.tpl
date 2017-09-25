@@ -6,7 +6,7 @@ if [[ -n "${DEBUG}" ]]; then
     set -x
 fi
 
-exec "${GITLAB_WORKHORSE_DIR}/gitlab-workhorse" \
+exec gitlab-workhorse \
   -listenUmask 0 \
   -listenNetwork tcp \
   -listenAddr "0.0.0.0:8181" \
@@ -15,4 +15,4 @@ exec "${GITLAB_WORKHORSE_DIR}/gitlab-workhorse" \
   -proxyHeadersTimeout {{ getenv "WORKHORSE_TIMEOUT" "5m0s" }} \
   -secretPath {{ getenv "GITLAB_DIR" }}/.gitlab_workhorse_secret \
   -logFile "/proc/self/fd/2" \
-  -config "${GITLAB_WORKHORSE_DIR}/config.toml"
+  -config workhorse.toml
