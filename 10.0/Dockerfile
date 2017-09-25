@@ -1,7 +1,7 @@
 FROM wodby/ruby:2.3.5
 
 ENV GOTPL_VER="0.1.5" \
-    GITLAB_VER="10.0.0" \
+    GITLAB_VER="10.0.1" \
     GITLAB_DATA_DIR="/mnt/data" \
     RAILS_ENV="production" \
     NODE_ENV="production"
@@ -109,7 +109,8 @@ RUN mkdir -p ${GITLAB_DIR} && \
     su-exec git bundle exec rake gettext:po_to_json
 
     # Install gitlab shell.
-RUN su-exec git bundle exec rake gitlab:shell:install REDIS_URL=redis:6379 SKIP_STORAGE_VALIDATION=true && \
+RUN cd ${GITLAB_DIR} && \
+    su-exec git bundle exec rake gitlab:shell:install REDIS_URL=redis:6379 SKIP_STORAGE_VALIDATION=true && \
 
     # Install gitlab pages.
     wget -qO- ${GITLAB_PAGES_URL} | tar xz --strip-components=1 -C /tmp/gitlab-pages && \

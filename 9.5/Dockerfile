@@ -109,7 +109,8 @@ RUN mkdir -p ${GITLAB_DIR} && \
     su-exec git bundle exec rake gettext:po_to_json
 
     # Install gitlab shell.
-RUN su-exec git bundle exec rake gitlab:shell:install REDIS_URL=redis:6379 SKIP_STORAGE_VALIDATION=true && \
+RUN cd ${GITLAB_DIR} && \
+    su-exec git bundle exec rake gitlab:shell:install REDIS_URL=redis:6379 SKIP_STORAGE_VALIDATION=true && \
 
     # Install gitlab pages.
     wget -qO- ${GITLAB_PAGES_URL} | tar xz --strip-components=1 -C /tmp/gitlab-pages && \
