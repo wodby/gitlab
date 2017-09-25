@@ -8,9 +8,14 @@ services:
 env:
   global:
     - DOCKER_COMPOSE_VERSION=1.11.2
-    - LATEST_VERSION=9.5
+    - LATEST_VERSION=10.0
   matrix:
+    - VERSION=10.0
     - VERSION=9.5
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 install:
   - sudo rm /usr/local/bin/docker-compose

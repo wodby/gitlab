@@ -1,7 +1,7 @@
 FROM wodby/ruby:2.3.5
 
 ENV GOTPL_VER="0.1.5" \
-    GITLAB_VER="9.5.5" \
+    GITLAB_VER="10.0.0" \
     GITLAB_DATA_DIR="/mnt/data" \
     RAILS_ENV="production" \
     NODE_ENV="production"
