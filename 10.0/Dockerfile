@@ -37,6 +37,7 @@ RUN set -xe && \
     apk add --update --no-cache --virtual .gitlab-rundeps \
         bash \
         ca-certificates \
+        curl \
         git \
         gzip \
         icu-libs \
@@ -82,10 +83,10 @@ RUN set -xe && \
         yaml-dev \
         zlib-dev && \
 
-    apk add --update redis
+    apk add --update redis && \
 
     # Download gitlab.
-RUN mkdir -p ${GITLAB_DIR} && \
+    mkdir -p ${GITLAB_DIR} && \
     wget -qO- ${GITLAB_URL} | tar xz --strip-components=1 -C ${GITLAB_DIR} && \
     chown -R git:git ${GITLAB_DIR} && \
 
@@ -102,6 +103,8 @@ RUN mkdir -p ${GITLAB_DIR} && \
 
     # Compile assets
     su-exec git yarn install --production --pure-lockfile && \
+    # webpack issue workaround https://gitlab.com/gitlab-org/gitlab-ce/issues/38275
+    su-exec git yarn add ajv@^4.0.0 && \
     su-exec git bundle exec rake gitlab:assets:compile && \
 
     # PO files
