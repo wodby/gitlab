@@ -12,7 +12,7 @@ run_action() {
 
 docker-compose -f test/docker-compose.yml up
 
-run_action check-ready delay_seconds=5 max_try=25 up -d
+run_action check-ready delay_seconds=5 max_try=25 up
 #docker-compose -f test/docker-compose.yml exec nginx make check-ready -f /usr/local/bin/actions.mk
 run_action init-data-dir
 run_action migrate-database

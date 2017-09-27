@@ -130,6 +130,7 @@ RUN set -xe && \
     # Install gitaly (build gems from source)
     export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
     su-exec git bundle exec rake "gitlab:gitaly:install[/tmp/gitaly]" && \
+    mv /tmp/gitaly/gitaly /usr/local/bin && \
     mv /tmp/gitaly/ruby /home/git/gitaly-ruby && \
 
     # Gotpl

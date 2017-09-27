@@ -33,10 +33,10 @@ after_success: |
     make release
 
     if [ -n "$TRAVIS_TAG" ]; then
-      make VERSION="$VERSION-$TRAVIS_TAG" release
+      make release VERSION="$VERSION-$TRAVIS_TAG"
     fi
 
     if [ "$VERSION" == "$LATEST_VERSION" ]; then
-      make VERSION=latest release
+      make release VERSION=latest
     fi
   fi

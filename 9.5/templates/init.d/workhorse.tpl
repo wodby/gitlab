@@ -15,4 +15,4 @@ exec gitlab-workhorse \
   -proxyHeadersTimeout {{ getenv "WORKHORSE_TIMEOUT" "5m0s" }} \
   -secretPath {{ getenv "GITLAB_DIR" }}/.gitlab_workhorse_secret \
   -logFile "/proc/self/fd/2" \
-  -config workhorse.toml
+  -config {{ getenv "GITLAB_DIR"}}/workhorse.toml
