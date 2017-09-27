@@ -8,8 +8,8 @@ services:
       - workhorse
     ports:
       - "80:80"
-    environment:
-      - DEBUG=true
+#    environment:
+#      - DEBUG=true
     volumes:
       - data:/mnt/data
 
@@ -40,7 +40,7 @@ services:
       - postgres
       - gitaly
     environment:
-      - DEBUG=true
+#      - DEBUG=true
       - GITLAB_HOST=gitlab.loc
 #      - GITLAB_LOG_LEVEL=debug
       - GITLAB_ROOT_PASSWORD=password
@@ -68,9 +68,8 @@ services:
 
   gitaly:
     image: $IMAGE
-    environment:
-      - DEBUG=true
-    working_dir: /home/git/gitaly
+#    environment:
+#      - DEBUG=true
     command: /etc/init.d/gitaly
     expose:
       - "9999"
@@ -83,12 +82,11 @@ services:
       - gitlab
       - redis
     environment:
-      - DEBUG=true
+#      - DEBUG=true
       # openssl rand -base64 32
       - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
       # openssl rand -hex 16
       - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
-    working_dir: /home/git/gitlab-workhorse
     command: /etc/init.d/workhorse
     expose:
       - "8181"
@@ -97,10 +95,8 @@ services:
 
   sidekiq:
     image: $IMAGE
-    depends_on:
-      - gitlab
     environment:
-      - DEBUG=true
+#      - DEBUG=true
 #      - GITLAB_LOG_LEVEL=debug
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
@@ -125,11 +121,8 @@ services:
 
   sshd:
     image: $IMAGE
-    depends_on:
-      - gitlab
     environment:
-      - RUBYOPT=--disable-gems
-      - DEBUG=true
+#      - DEBUG=true
       - GITLAB_SHELL_LOG_LEVEL=debug
       - GITLAB_SHELL_REDIS_HOST=redis
       - GITLAB_SHELL_REDIS_PORT=6379

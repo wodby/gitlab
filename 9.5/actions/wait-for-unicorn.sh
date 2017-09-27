@@ -15,17 +15,17 @@ delay_seconds=$4
 sleep "${delay_seconds}"
 
 for i in $(seq 1 "${max_try}"); do
-    if curl -s "${host}/.healthz" &> /dev/null; then
+    if curl -s "${host}:8080" &> /dev/null; then
         started=1
         break
     fi
-    echo 'Nginx is starting...'
+    echo "Unicorn is starting..."
     sleep "${wait_seconds}"
 done
 
 if [[ "${started}" -eq '0' ]]; then
-    echo >&2 'Error. Nginx is unreachable.'
+    echo >&2 "Error. Unicorn is unreachable."
     exit 1
 fi
 
-echo 'Nginx has started!'
+echo "Unicorn has started!"
