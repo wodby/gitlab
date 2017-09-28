@@ -40,7 +40,9 @@ redis:
   bin: /usr/bin/redis-cli
   host: {{ getenv "GITLAB_SHELL_REDIS_HOST" "redis" }}
   port: {{ getenv "GITLAB_SHELL_REDIS_PORT" "6379" }}
-#  pass: redispass # Allows you to specify the password for Redis
+  {{ if getenv "REDIS_PASS" }}
+  pass: {{ getenv "REDIS_PASS" }}
+  {{ end }}
   database: 0
 #  socket: /var/run/redis/redis.sock # Comment out this line if you want to use TCP or Sentinel
   namespace: resque:gitlab

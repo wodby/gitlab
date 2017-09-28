@@ -13,7 +13,7 @@ build:
 	docker build -t $(REPO):$(VERSION) ./
 
 test:
-	IMAGE=$(REPO):$(VERSION) IMAP_EMAIL=$(IMAP_EMAIL) IMAP_PASS=$(IMAP_PASS) ./test.sh
+	IMAGE=$(REPO):$(VERSION) ./test.sh
 
 push:
 	docker push $(REPO):$(VERSION)
@@ -36,5 +36,4 @@ logs:
 clean:
 	-docker rm -f $(NAME)
 
-release: build
-	make push -e VERSION=$(VERSION)
+release: build push

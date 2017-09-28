@@ -19,28 +19,10 @@ init_sshd() {
     # Make sure ~/.ssh symlink won't be broken.
     mkdir -p "${GITLAB_DATA_DIR}/.ssh"
 
-    # Env vars for SSH sessions.
-    printenv | xargs -I{} echo {} | awk ' \
-        BEGIN { FS = "=" }; { \
-            if ($1 != "HOME" \
-                && $1 != "PWD" \
-                && $1 != "PATH" \
-                && $1 != "SHLVL") { \
-                \
-                print ""$1"="$2"" \
-            } \
-        }' > /home/git/.ssh/environment
+    sshd-init-env.sh
 
     if [[ ! -e "${GITLAB_DATA_DIR}/ssh/ssh_host_rsa_key" ]]; then
-        echo -n "Generating OpenSSH host keys... "
-        mkdir -p "${GITLAB_DATA_DIR}/ssh"
-        ssh-keygen -qt rsa -N '' -f "${GITLAB_DATA_DIR}/ssh/ssh_host_rsa_key"
-        ssh-keygen -qt dsa -N '' -f "${GITLAB_DATA_DIR}/ssh/ssh_host_dsa_key"
-        ssh-keygen -qt ecdsa -N '' -f "${GITLAB_DATA_DIR}/ssh/ssh_host_ecdsa_key"
-        ssh-keygen -qt ed25519 -N '' -f "${GITLAB_DATA_DIR}/ssh/ssh_host_ed25519_key"
-        chmod 0600 ${GITLAB_DATA_DIR}/ssh/*_key
-        chmod 0644 ${GITLAB_DATA_DIR}/ssh/*.pub
-        echo "OK"
+        sudo sshd-generate-keys.sh "${GITLAB_DATA_DIR}"
     fi
 }
 
@@ -75,7 +57,7 @@ process_secrets() {
     fi
 }
 
-sudo gitlab-fix-permissions.sh
+sudo fix-permissions.sh git git "${GITLAB_DATA_DIR}"
 
 process_templates
 process_secrets
@@ -87,7 +69,7 @@ mkdir -p "${GITLAB_REPOS_DIR}"
 if [[ $1 == "make" ]]; then
     exec "${@}" -f /usr/local/bin/actions.mk
 else
-    if [[ "${@}" == "sudo /usr/sbin/sshd"* ]]; then
+    if [[ "${1} ${2}" == "sudo /usr/sbin/sshd" ]]; then
         init_sshd
     fi
 

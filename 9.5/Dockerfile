@@ -1,7 +1,6 @@
 FROM wodby/ruby:2.3.5
 
-ENV GOTPL_VER="0.1.5" \
-    GITLAB_VER="9.5.5" \
+ENV GITLAB_VER="10.0.2" \
     GITLAB_DATA_DIR="/mnt/data" \
     RAILS_ENV="production" \
     NODE_ENV="production"
@@ -25,8 +24,7 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_ARTIFACTS_DIR="${GITLAB_DATA_DIR}/shared/artifacts" \
 
     GITLAB_URL="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
-    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz" \
-    GOTPL_URL="https://github.com/wodby/gotpl/releases/download/${GOTPL_VER}/gotpl-alpine-linux-amd64-${GOTPL_VER}.tar.gz"
+    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz"
 
 RUN set -xe && \
 
@@ -35,28 +33,20 @@ RUN set -xe && \
 	sed -i '/^git/s/!/*/' /etc/shadow && \
 
     apk add --update --no-cache --virtual .gitlab-rundeps \
-        bash \
-        ca-certificates \
-        curl \
         git \
-        gzip \
         icu-libs \
         libc6-compat \
         libre2 \
         libressl \
         make \
         mariadb-client \
-        nodejs \
         openssh \
         postgresql-client \
         python2 \
         rsync \
         su-exec \
         sudo \
-        tar \
-        tzdata \
-        wget \
-        yarn && \
+        tzdata && \
 
     apk add --update --no-cache --virtual .gitlab-build-deps \
         autoconf \
@@ -76,11 +66,13 @@ RUN set -xe && \
         linux-headers \
         mariadb-dev \
         ncurses-dev \
+        nodejs \
         patch \
         postgresql-dev \
         readline-dev \
         sqlite-dev \
         yaml-dev \
+        yarn \
         zlib-dev && \
 
     apk add --update redis && \
@@ -133,9 +125,6 @@ RUN set -xe && \
     mv /tmp/gitaly/gitaly /usr/local/bin && \
     mv /tmp/gitaly/ruby /home/git/gitaly-ruby && \
 
-    # Gotpl
-    wget -qO- ${GOTPL_URL} | tar xz -C /usr/local/bin && \
-
     cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb && \
     rm config/secrets.yml && \
 
@@ -161,14 +150,13 @@ RUN set -xe && \
       /etc/ssh/sshd_config && \
     echo "UseDNS no" >> /etc/ssh/sshd_config && \
 
-    # Fix permissions script.
+    # Configure sudoers
     { \
-        echo "sudo chown -R git:git ${GITLAB_DATA_DIR}" ; \
-        echo "sudo chown -R git:git ${GITLAB_DIR}/config" ; \
-        echo "sudo chown git:git ${GITLAB_SHELL_DIR}/config.yml" ; \
-    } | tee /usr/local/bin/gitlab-fix-permissions.sh && \
-    chmod +x /usr/local/bin/gitlab-fix-permissions.sh && \
-    echo 'git ALL=(root) NOPASSWD: /usr/local/bin/gitlab-fix-permissions.sh, /usr/sbin/sshd' > /etc/sudoers.d/git && \
+        echo -n 'git ALL=(root) NOPASSWD: ' ; \
+        echo -n '/usr/local/bin/sshd-generate-keys.sh, ' ; \
+        echo -n '/usr/local/bin/fix-permissions.sh, ' ; \
+        echo '/usr/sbin/sshd' ; \
+    } | tee /etc/sudoers.d/git && \
 
     rm -rf "/home/git/.ssh" && \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh" && \
@@ -179,6 +167,7 @@ RUN set -xe && \
 
     apk del --purge .gitlab-build-deps && \
     apk del --purge redis && \
+    rm -rf ${GITLAB_DIR}/node_modules && \
     rm -rf /tmp/*
 
 VOLUME ${GITLAB_DATA_DIR}

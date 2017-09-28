@@ -10,11 +10,11 @@ fi
 case "${DB_ADAPTER}" in
     mysql2)
       QUERY="SELECT count(*) FROM information_schema.tables WHERE table_schema = '${DB_NAME}';"
-      COUNT=$(mysql -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} -ss -e "${QUERY}")
+      COUNT=$(mysql -h "${DB_HOST}" -P "${DB_PORT}" -u "${DB_USER}" "${DB_PASS:+-p$DB_PASS}" -ss -e "${QUERY}")
       ;;
     postgresql)
       QUERY="SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';"
-      COUNT=$(PGPASSWORD="${DB_PASS}" psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -Atw -c "${QUERY}")
+      COUNT=$(PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" -Atw -c "${QUERY}")
       ;;
 esac
 

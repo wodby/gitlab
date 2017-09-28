@@ -1,3 +1,5 @@
 [redis]
-URL = "{{ getenv "REDIS_URL" "tcp://redis:6379" }}"
-Password = "{{ getenv "REDIS_PASSWORD" }}"
+URL = "tcp://{{ getenv "REDIS_HOST" "redis" }}:{{ getenv "REDIS_PORT" "6379" }}"
+{{ if getenv "REDIS_PASS" }}
+Password = "{{ getenv "REDIS_PASS" }}"
+{{ end }}
