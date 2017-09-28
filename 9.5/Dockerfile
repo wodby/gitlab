@@ -95,6 +95,8 @@ RUN set -xe && \
 
     # Compile assets
     su-exec git yarn install --production --pure-lockfile && \
+    # webpack issue workaround https://gitlab.com/gitlab-org/gitlab-ce/issues/38275
+    su-exec git yarn add ajv@^4.0.0 && \
     su-exec git bundle exec rake gitlab:assets:compile && \
 
     # PO files
