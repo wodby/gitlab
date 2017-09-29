@@ -39,6 +39,7 @@ RUN set -xe && \
         libre2 \
         libressl \
         make \
+        nodejs \
         mariadb-client \
         openssh \
         postgresql-client \
@@ -66,7 +67,6 @@ RUN set -xe && \
         linux-headers \
         mariadb-dev \
         ncurses-dev \
-        nodejs \
         patch \
         postgresql-dev \
         readline-dev \
