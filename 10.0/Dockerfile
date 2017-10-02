@@ -40,7 +40,6 @@ RUN set -xe && \
         libressl \
         make \
         mariadb-client \
-        nodejs \
         openssh \
         postgresql-client \
         python2 \
@@ -67,6 +66,7 @@ RUN set -xe && \
         linux-headers \
         mariadb-dev \
         ncurses-dev \
+        nodejs \
         patch \
         postgresql-dev \
         readline-dev \
@@ -171,6 +171,8 @@ RUN set -xe && \
     apk del --purge redis && \
     rm -rf ${GITLAB_DIR}/node_modules && \
     rm -rf /tmp/*
+
+ENV EXECJS_RUNTIME "Disabled"
 
 VOLUME ${GITLAB_DATA_DIR}
 
