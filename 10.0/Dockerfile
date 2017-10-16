@@ -159,7 +159,7 @@ RUN set -xe && \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh" && \
 
     # Prepare directories
-    chown git: "/etc/ssh/sshd_config"
+    chown git: "/etc/ssh/sshd_config" && \
     mkdir -p ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
     chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ && \
 
