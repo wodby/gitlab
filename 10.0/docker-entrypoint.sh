@@ -19,24 +19,35 @@ init_sshd() {
     # Make sure ~/.ssh symlink won't be broken.
     mkdir -p "${GITLAB_DATA_DIR}/.ssh"
 
-    sshd-init-env.sh
+    printenv | xargs -I{} echo {} | awk ' \
+        BEGIN { FS = "=" }; { \
+            if ($1 != "HOME" \
+                && $1 != "PWD" \
+                && $1 != "PATH" \
+                && $1 != "SHLVL") { \
+                \
+                print ""$1"="$2"" \
+            } \
+        }' > "${GITLAB_DATA_DIR}/.ssh/environment"
 
     if [[ ! -e "${GITLAB_DATA_DIR}/ssh/ssh_host_rsa_key" ]]; then
-        sudo sshd-generate-keys.sh "${GITLAB_DATA_DIR}"
+        sudo sshd-generate-keys.sh "${GITLAB_DATA_DIR}/ssh"
     fi
+
+    exec_tpl "sshd_config.tpl" "/etc/ssh/sshd_config"
 }
 
 process_templates() {
+    exec_tpl "gitlab.yml.tpl" "${GITLAB_DIR}/config/gitlab.yml"
     exec_tpl "unicorn.rb.tpl" "${GITLAB_DIR}/config/unicorn.rb"
     exec_tpl "production.rb.tpl" "${GITLAB_DIR}/config/environments/production.rb"
     exec_tpl "smtp_settings.rb.tpl" "${GITLAB_DIR}/config/initializers/smtp_settings.rb"
-
     exec_tpl "database.yml.tpl" "${GITLAB_DIR}/config/database.yml"
-    exec_tpl "gitaly.toml.tpl" "${GITLAB_DIR}/gitaly.toml"
-    exec_tpl "gitlab.yml.tpl" "${GITLAB_DIR}/config/gitlab.yml"
-    exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
     exec_tpl "resque.yml.tpl" "${GITLAB_DIR}/config/resque.yml"
     exec_tpl "secrets.yml.tpl" "${GITLAB_DIR}/config/secrets.yml"
+
+    exec_tpl "gitaly.toml.tpl" "${GITLAB_DIR}/gitaly.toml"
+    exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
     exec_tpl "workhorse.toml.tpl" "${GITLAB_DIR}/workhorse.toml"
 
     exec_tpl "init.d/gitaly.tpl" "/etc/init.d/gitaly"

@@ -1,6 +1,6 @@
 FROM wodby/ruby:2.3.5
 
-ENV GITLAB_VER="10.0.2" \
+ENV GITLAB_VER="10.0.3" \
     GITLAB_DATA_DIR="/mnt/data" \
     RAILS_ENV="production" \
     NODE_ENV="production"
@@ -24,7 +24,13 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_ARTIFACTS_DIR="${GITLAB_DATA_DIR}/shared/artifacts" \
 
     GITLAB_URL="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
-    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz"
+    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz" \
+
+    SSHD_PASSWORD_AUTHENTICATION="no" \
+    SSHD_USE_DNS="no" \
+    SSHD_PERMIT_USER_ENV="yes" \
+    SSHD_HOST_KEYS_DIR="${GITLAB_DATA_DIR}/ssh" \
+    SSHD_LOG_LEVEL="VERBOSE"
 
 RUN set -xe && \
 
@@ -141,17 +147,6 @@ RUN set -xe && \
     cp /usr/bin/redis-cli /usr/bin/redis && \
     ln -s /usr/local/bin/ruby /usr/bin/ && \
 
-    # SSHd config
-    sed -i "s|^[#]*HostKey /etc/ssh/|HostKey ${GITLAB_DATA_DIR}/ssh/|g" /etc/ssh/sshd_config && \
-    sed -i '/PermitUserEnvironment/c\PermitUserEnvironment yes' /etc/ssh/sshd_config && \
-    sed -i \
-      -e "s|^[#]*UsePAM yes|UsePAM no|" \
-      -e "s|^[#]*UsePrivilegeSeparation yes|UsePrivilegeSeparation no|" \
-      -e "s|^[#]*PasswordAuthentication yes|PasswordAuthentication no|" \
-      -e "s|^[#]*LogLevel INFO|LogLevel VERBOSE|" \
-      /etc/ssh/sshd_config && \
-    echo "UseDNS no" >> /etc/ssh/sshd_config && \
-
     # Configure sudoers
     { \
         echo -n 'git ALL=(root) NOPASSWD: ' ; \
@@ -164,6 +159,7 @@ RUN set -xe && \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh" && \
 
     # Prepare directories
+    chown git: "/etc/ssh/sshd_config"
     mkdir -p ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
     chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ && \
 
