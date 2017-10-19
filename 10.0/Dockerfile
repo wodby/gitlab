@@ -1,6 +1,8 @@
 FROM wodby/ruby:2.3.5
 
-ENV GITLAB_VER="10.0.3" \
+ARG GITLAB_VER
+
+ENV GITLAB_VER="${GITLAB_VER}" \
     GITLAB_DATA_DIR="/mnt/data" \
     RAILS_ENV="production" \
     NODE_ENV="production"

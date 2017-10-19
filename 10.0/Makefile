@@ -1,31 +1,32 @@
 -include env_make
 
-VERSION ?= 10.0
+GITLAB_VER ?= 10.0.4
+TAG ?= 10.0
 
 REPO = wodby/gitlab
-NAME = gitlab-10.0
+NAME = gitlab-$(GITLAB_VER)
 
 .PHONY: build test push shell run start stop logs clean release
 
 default: build
 
 build:
-	docker build -t $(REPO):$(VERSION) ./
+	docker build -t $(REPO):$(TAG) --build-arg GITLAB_VER=$(GITLAB_VER) ./
 
 test:
-	IMAGE=$(REPO):$(VERSION) ./test.sh
+	IMAGE=$(REPO):$(TAG) ./test.sh
 
 push:
-	docker push $(REPO):$(VERSION)
+	docker push $(REPO):$(TAG)
 
 shell:
-	docker run --rm --name $(NAME) -i -t $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(VERSION) /bin/bash
+	docker run --rm --name $(NAME) -i -t $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG) /bin/bash
 
 run:
-	docker run --rm --name $(NAME) -e DEBUG=1 $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(VERSION) $(CMD)
+	docker run --rm --name $(NAME) -e DEBUG=1 $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG) $(CMD)
 
 start:
-	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(VERSION)
+	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG)
 
 stop:
 	docker stop $(NAME)

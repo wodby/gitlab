@@ -9,9 +9,9 @@ env:
   global:
     - DOCKER_COMPOSE_VERSION=1.11.2
     - DOCKER_VERSION=17.06.2
-    - LATEST_VERSION=10.0
+    - LATEST_TAG=10.0
   matrix:
-    - VERSION=10.0
+    - TAG=10.0
 
 install:
   - sudo apt-get update
@@ -22,17 +22,17 @@ install:
   - sudo mv docker-compose /usr/local/bin
 
 script:
-  - cd ./"${VERSION}"
+  - cd ./"${TAG}"
   - make
 
 after_success: |
-  if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ("${TRAVIS_BRANCH}" == "master"  || -n "${TRAVIS_TAG}") ]];
+  if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ("${TRAVIS_BRANCH}" == "master"  || -n "${TRAVIS_TAG}") ]]; then
     docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
     make release
 
     if [[ -n "${TRAVIS_TAG}" ]]; then
-      make release TAG="${VERSION}-${TRAVIS_TAG}"
-    elif [[ "${VERSION}" == "${LATEST_VERSION}" ]]; then
+      make release TAG="${TAG}-${TRAVIS_TAG}"
+    elif [[ "${TAG}" == "${LATEST_TAG}" ]]; then
       make release TAG="latest"
     fi
   fi
