@@ -9,9 +9,9 @@ env:
   global:
     - DOCKER_COMPOSE_VERSION=1.11.2
     - DOCKER_VERSION=17.06.2
-    - LATEST_TAG=10.0
+    - LATEST_GITLAB_VER=10.0.4
   matrix:
-    - TAG=10.0
+    - VERSION=10.0 GITLAB_VER=10.0.4
 
 install:
   - sudo apt-get update
@@ -22,7 +22,7 @@ install:
   - sudo mv docker-compose /usr/local/bin
 
 script:
-  - cd ./"${TAG}"
+  - cd ./"${VERSION}"
   - make
 
 after_success: |
@@ -31,8 +31,8 @@ after_success: |
     make release
 
     if [[ -n "${TRAVIS_TAG}" ]]; then
-      make release TAG="${TAG}-${TRAVIS_TAG}"
-    elif [[ "${TAG}" == "${LATEST_TAG}" ]]; then
+      make release TAG="${GITLAB_VER}-${TRAVIS_TAG}"
+    elif [[ "${GITLAB_VER}" == "${LATEST_GITLAB_VER}" ]]; then
       make release TAG="latest"
     fi
   fi
