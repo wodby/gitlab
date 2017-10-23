@@ -9,9 +9,9 @@ env:
   global:
     - DOCKER_COMPOSE_VERSION=1.11.2
     - DOCKER_VERSION=17.06.2
-    - LATEST_TAG=10.0
+    - LATEST_TAG=10
   matrix:
-    - TAG=10.0
+    - TAG=10
 
 install:
   - sudo apt-get update
