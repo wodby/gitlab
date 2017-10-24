@@ -130,6 +130,7 @@ RUN set -xe && \
     mv /tmp/workhorse/gitlab-workhorse /usr/local/bin && \
 
     # Install gitaly (build gems from source)
+    chown -R git $(go env GOROOT)/pkg && \
     export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
     su-exec git bundle exec rake "gitlab:gitaly:install[/tmp/gitaly]" && \
     mv /tmp/gitaly/gitaly /usr/local/bin && \
