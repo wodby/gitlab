@@ -14,7 +14,7 @@ build:
 	docker build -t $(REPO):$(TAG) --build-arg GITLAB_VER=$(GITLAB_VER) ./
 
 test:
-	IMAGE=$(REPO):$(TAG) ./test.sh
+	RELAY_PASSWORD=$(RELAY_PASSWORD) IMAGE=$(REPO):$(TAG) ./test.sh
 
 push:
 	docker push $(REPO):$(TAG)

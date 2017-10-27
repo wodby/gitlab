@@ -132,9 +132,7 @@ RUN set -xe && \
     # Install gitaly (build gems from source)
     chown -R git $(go env GOROOT)/pkg && \
     export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
-    su-exec git bundle exec rake "gitlab:gitaly:install[/tmp/gitaly]" && \
-    mv /tmp/gitaly/gitaly /usr/local/bin && \
-    mv /tmp/gitaly/ruby /home/git/gitaly-ruby && \
+    su-exec git bundle exec rake "gitlab:gitaly:install[/home/git/gitaly]" && \
 
     cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb && \
     rm config/secrets.yml && \

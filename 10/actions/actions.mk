@@ -4,7 +4,7 @@ host ?= localhost
 max_try ?= 1
 wait_seconds ?= 1
 delay_seconds ?= 0
-command ?= curl -s "${host}:8080" &> /dev/null
+command ?= curl -s ${host}:8080 &> /dev/null
 service ?= "Unicorn"
 
 default: check-ready

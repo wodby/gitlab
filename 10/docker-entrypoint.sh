@@ -46,7 +46,7 @@ process_templates() {
     exec_tpl "resque.yml.tpl" "${GITLAB_DIR}/config/resque.yml"
     exec_tpl "secrets.yml.tpl" "${GITLAB_DIR}/config/secrets.yml"
 
-    exec_tpl "gitaly.toml.tpl" "${GITLAB_DIR}/gitaly.toml"
+    exec_tpl "gitaly.toml.tpl" "/home/git/gitaly/gitaly.toml"
     exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
     exec_tpl "workhorse.toml.tpl" "${GITLAB_DIR}/workhorse.toml"
 

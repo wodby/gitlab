@@ -67,6 +67,7 @@ production: &base
     # Uncomment and set to false if you need to disable email sending from GitLab (default: true)
     # email_enabled: true
     # Email address used in the "From" field in mails sent by GitLab
+    email_enabled: {{ getenv "GITLAB_EMAIL_ENABLED" "true" }}
     email_from: {{ getenv "GITLAB_EMAIL_FROM" "example@example.com" }}
     email_display_name: {{ getenv "GITLAB_EMAIL_DISPLAY_NAME" "GitLab" }}
     email_reply_to: {{ getenv "GITLAB_EMAIL_REPLY_TO" "noreply@example.com" }}
@@ -76,13 +77,20 @@ production: &base
 
     # default_can_create_group: false  # default: true
     # username_changing_enabled: false # default: true - User can change her username/namespace
+    ## Default theme ID
+    ##   1 - Indigo
+    ##   2 - Dark
+    ##   3 - Light
+    ##   4 - Blue
+    ##   5 - Green
+    # default_theme: 1 # default: 1
 
     ## Automatic issue closing
     # If a commit message matches this regular expression, all issues referenced from the matched text will be closed.
     # This happens when the commit is pushed or merged into the default branch of a project.
     # When not specified the default issue_closing_pattern as specified below will be used.
     # Tip: you can test your closing pattern at http://rubular.com.
-    # issue_closing_pattern: '((?:[Cc]los(?:e[sd]?|ing)|[Ff]ix(?:e[sd]|ing)?|[Rr]esolv(?:e[sd]?|ing))(:?) +(?:(?:issues? +)?%{issue_ref}(?:(?:, *| +and +)?)|([A-Z][A-Z0-9_]+-\d+))+)'
+    # issue_closing_pattern: '((?:[Cc]los(?:e[sd]?|ing)|[Ff]ix(?:e[sd]|ing)?|[Rr]esolv(?:e[sd]?|ing)|[Ii]mplement(?:s|ed|ing)?)(:?) +(?:(?:issues? +)?%{issue_ref}(?:(?:, *| +and +)?)|([A-Z][A-Z0-9_]+-\d+))+)'
 
     ## Default project features settings
     default_projects_features:
@@ -228,7 +236,8 @@ production: &base
   # ==========================
 
   ## LDAP settings
-  # You can inspect a sample of the LDAP users with login access by running:
+  # You can test connections and inspect a sample of the LDAP users with login
+  # access by running:
   #   bundle exec rake gitlab:ldap:check RAILS_ENV=production
   ldap:
     enabled: false
@@ -251,12 +260,43 @@ production: &base
         # Example: 'Paris' or 'Acme, Ltd.'
         label: 'LDAP'
 
+        # Example: 'ldap.mydomain.com'
         host: '_your_ldap_server'
-        port: 389
-        uid: 'sAMAccountName'
-        method: 'plain' # "tls" or "ssl" or "plain"
+        # This port is an example, it is sometimes different but it is always an integer and not a string
+        port: 389 # usually 636 for SSL
+        uid: 'sAMAccountName' # This should be the attribute, not the value that maps to uid.
+
+        # Examples: 'america\\momo' or 'CN=Gitlab Git,CN=Users,DC=mydomain,DC=com'
         bind_dn: '_the_full_dn_of_the_user_you_will_bind_with'
         password: '_the_password_of_the_bind_user'
+
+        # Encryption method. The "method" key is deprecated in favor of
+        # "encryption".
+        #
+        #   Examples: "start_tls" or "simple_tls" or "plain"
+        #
+        #   Deprecated values: "tls" was replaced with "start_tls" and "ssl" was
+        #   replaced with "simple_tls".
+        #
+        encryption: 'plain'
+
+        # Enables SSL certificate verification if encryption method is
+        # "start_tls" or "simple_tls". Defaults to true.
+        verify_certificates: true
+
+        # Specifies the path to a file containing a PEM-format CA certificate,
+        # e.g. if you need to use an internal CA.
+        #
+        #   Example: '/etc/ca.pem'
+        #
+        ca_file: ''
+
+        # Specifies the SSL version for OpenSSL to use, if the OpenSSL default
+        # is not appropriate.
+        #
+        #   Example: 'TLSv1_1'
+        #
+        ssl_version: ''
 
         # Set a timeout, in seconds, for LDAP queries. This helps avoid blocking
         # a request if the LDAP server becomes unresponsive.
@@ -286,16 +326,19 @@ production: &base
 
         # Base where we can search for users
         #
-        #   Ex. ou=People,dc=gitlab,dc=example
+        #   Ex. 'ou=People,dc=gitlab,dc=example' or 'DC=mydomain,DC=com'
         #
         base: ''
 
         # Filter LDAP users
         #
-        #   Format: RFC 4515 http://tools.ietf.org/search/rfc4515
+        #   Format: RFC 4515 https://tools.ietf.org/search/rfc4515
         #   Ex. (employeeType=developer)
         #
         #   Note: GitLab does not support omniauth-ldap's custom filter syntax.
+        #
+        #   Example for getting only specific users:
+        #   '(&(objectclass=user)(|(samaccountname=momo)(samaccountname=toto)))'
         #
         user_filter: ''
 
@@ -337,9 +380,16 @@ production: &base
     # showing GitLab's sign-in page (default: show the GitLab sign-in page)
     # auto_sign_in_with_provider: saml
 
-    # Sync user's email address from the specified Omniauth provider every time the user logs
-    # in (default: nil). And consequently make this field read-only.
-    # sync_email_from_provider: cas3
+    # Sync user's profile from the specified Omniauth providers every time the user logs in (default: empty).
+    # Define the allowed providers using an array, e.g. ["cas3", "saml", "twitter"],
+    # or as true/false to allow all providers or none.
+    # sync_profile_from_provider: []
+
+    # Select which info to sync from the providers above. (default: email).
+    # Define the synced profile info using an array. Available options are "name", "email" and "location"
+    # e.g. ["name", "email", "location"] or as true to sync all available.
+    # This consequently will make the selected attributes read-only.
+    # sync_profile_attributes: true
 
     # CAUTION!
     # This allows users to login without having a user account first. Define the allowed providers
@@ -383,13 +433,13 @@ production: &base
       #             service_validate_url: '/cas/p3/serviceValidate',
       #             logout_url: '/cas/logout'} }
       # - { name: 'authentiq',
-      #     # for client credentials (client ID and secret), go to https://www.authentiq.com/
+      #     # for client credentials (client ID and secret), go to https://www.authentiq.com/developers
       #     app_id: 'YOUR_CLIENT_ID',
       #     app_secret: 'YOUR_CLIENT_SECRET',
       #     args: {
       #             scope: 'aq:name email~rs address aq:push'
-      #             # redirect_uri parameter is optional except when 'gitlab.host' in this file is set to 'localhost'
-      #             # redirect_uri: 'YOUR_REDIRECT_URI'
+      #             # callback_url parameter is optional except when 'gitlab.host' in this file is set to 'localhost'
+      #             # callback_url: 'YOUR_CALLBACK_URL'
       #           }
       #   }
       # - { name: 'github',
@@ -450,10 +500,12 @@ production: &base
 
   # Gitaly settings
   gitaly:
+    # Path to the directory containing Gitaly client executables.
+    client_path: /home/git/gitaly
     # Default Gitaly authentication token. Can be overriden per storage. Can
     # be left blank when Gitaly is running locally on a Unix socket, which
     # is the normal way to deploy Gitaly.
-     enabled: true
+    token:
 
   #
   # 4. Advanced settings
@@ -471,6 +523,11 @@ production: &base
 #        gitaly_address: unix:/home/git/gitlab/tmp/sockets/private/gitaly.socket # TCP connections are supported too (e.g. tcp://host:port)
         gitaly_address: tcp://gitaly:9999
         # gitaly_token: 'special token' # Optional: override global gitaly.token for this storage.
+        failure_count_threshold: 10 # number of failures before stopping attempts
+        failure_wait_time: 30 # Seconds after an access failure before allowing access again
+        failure_reset_time: 1800 # Time in seconds to expire failures
+        storage_timeout: 30 # Time in seconds to wait before aborting a storage access attempt
+
 
   ## Backup settings
   backup:
@@ -524,12 +581,6 @@ production: &base
   # Use the default values unless you really know what you are doing
   git:
     bin_path: /usr/bin/git
-    # The next value is the maximum memory size grit can use
-    # Given in number of bytes per git object (e.g. a commit)
-    # This value can be increased if you have very large commits
-    max_size: 20971520 # 20.megabytes
-    # Git timeout to read a commit, in seconds
-    timeout: 10
 
   ## Webpack settings
   # If enabled, this will tell rails to serve frontend assets from the webpack-dev-server running
@@ -549,7 +600,12 @@ production: &base
     # IP whitelist to access monitoring endpoints
     ip_whitelist:
       - 127.0.0.0/8
-      - 172.17.0.0/16
+
+    # Sidekiq exporter is webserver built in to Sidekiq to expose Prometheus metrics
+    sidekiq_exporter:
+    #  enabled: true
+    #  address: localhost
+    #  port: 3807
 
   #
   # 5. Extra customization

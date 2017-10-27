@@ -53,6 +53,8 @@ services:
       - DB_NAME=gitlab
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - GITLAB_SMTP_ADDRESS=opensmtpd
+      - GITLAB_SMTP_PORT=25
       - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
@@ -132,9 +134,26 @@ services:
     working_dir: /home/git/gitlab-shell
     command: sudo /usr/sbin/sshd -De
     ports:
-      - "22:22"
+      - "2222:22"
     volumes:
       - data:/mnt/data
+
+#  mailroom:
+#    image: $IMAGE
+#    environment:
+#      - DEBUG=true
+#      - GITLAB_SMTP_ADDRESS=opensmptd
+#      - GITLAB_SMTP_PORT=25
+#    command: /etc/init.d/mailroom
+#    volumes:
+#      - data:/mnt/data
+
+  opesmptd:
+    image: wodby/opensmtpd
+    environment:
+      - RELAY_HOST=smtp.sendgrid.net
+      - RELAY_USER=apikey
+      - RELAY_PASSWORD=$RELAY_PASSWORD
 
 volumes:
   data:

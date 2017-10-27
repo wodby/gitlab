@@ -6,4 +6,4 @@ if [[ -n "${DEBUG}" ]]; then
     set -x
 fi
 
-exec gitaly {{ getenv "GITLAB_DIR"}}/gitaly.toml
+exec /home/git/gitaly/gitaly /home/git/gitaly/gitaly.toml

@@ -14,11 +14,11 @@ if Rails.env.production?
   ActionMailer::Base.delivery_method = :smtp
   ActionMailer::Base.smtp_settings = {
     address: "{{ getenv "GITLAB_SMTP_ADDRESS" }}",
-    port: {{ getenv "GITLAB_SMTP_PORT" "465" }},
-    user_name: "{{ getenv "GITLAB_SMTP_USER" "" }}",
-    password: "{{ getenv "GITLAB_SMTP_PASSWORD" "" }}",
-    domain: "{{ getenv "GITLAB_SMTP_DOMAIN" "gitlab.company.com" }}",
-    {{ if getenv "GITLAB_SMTP_USER" }}authentication: :login,{{ end }}
+    port: {{ getenv "GITLAB_SMTP_PORT" "25" }},
+    {{ if (getenv "GITLAB_SMTP_USER") }}user_name: "{{ getenv "GITLAB_SMTP_USER" "" }}",{{ end }}
+    {{ if (getenv "GITLAB_SMTP_PASSWORD") }}password: "{{ getenv "GITLAB_SMTP_PASSWORD" "" }}",{{ end }}
+    {{ if (getenv "GITLAB_SMTP_DOMAIN") }}domain: "{{ getenv "GITLAB_SMTP_DOMAIN" "gitlab.company.com" }}",{{ end }}
+    {{ if (getenv "GITLAB_SMTP_USER") }}authentication: :login,{{ end }}
     enable_starttls_auto: true,
     openssl_verify_mode: 'peer' # See ActionMailer documentation for other possible options
   }
