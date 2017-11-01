@@ -501,7 +501,7 @@ production: &base
   # Gitaly settings
   gitaly:
     # Path to the directory containing Gitaly client executables.
-    client_path: /home/git/gitaly
+    client_path: {{ getenv "GITALY_DIR" }}
     # Default Gitaly authentication token. Can be overriden per storage. Can
     # be left blank when Gitaly is running locally on a Unix socket, which
     # is the normal way to deploy Gitaly.
@@ -531,26 +531,34 @@ production: &base
 
   ## Backup settings
   backup:
-    path: "tmp/backups"   # Relative paths are relative to Rails.root (default: tmp/backups/)
-    # archive_permissions: 0640 # Permissions for the resulting backup.tar file (default: 0600)
-    # keep_time: 604800   # default: 0 (forever) (in seconds)
-    # pg_schema: public     # default: nil, it means that all schemas will be backed up
-    # upload:
-    #   # Fog storage connection settings, see http://fog.io/storage/ .
-    #   connection:
-    #     provider: AWS
-    #     region: eu-west-1
-    #     aws_access_key_id: AKIAKIAKI
-    #     aws_secret_access_key: 'secret123'
-    #   # The remote 'directory' to store your backups. For S3, this would be the bucket name.
-    #   remote_directory: 'my.s3.bucket'
-    #   # Use multipart uploads when file size reaches 100MB, see
-    #   #  http://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html
-    #   multipart_chunk_size: 104857600
-    #   # Turns on AWS Server-Side Encryption with Amazon S3-Managed Keys for backups, this is optional
-    #   # encryption: 'AES256'
-    #   # Specifies Amazon S3 storage class to use for backups, this is optional
-    #   # storage_class: 'STANDARD'
+    path: {{ getenv  "GITLAB_BACKUP_DIR" }}   # Relative paths are relative to Rails.root (default: tmp/backups/)
+    archive_permissions: {{ getenv "GITLAB_BACKUP_ARCHIVE_PERMISSION" "0640" }} # Permissions for the resulting backup.tar file (default: 0600)
+    keep_time: {{ getenv "GITLAB_BACKUP_KEEP_TIME" "604800" }}   # default: 0 (forever) (in seconds)
+    pg_schema: {{ getenv "GITLAB_BACKUP_PG_SCHEMA" "public" }}     # default: nil, it means that all schemas will be backed up
+{{ $provider := (getenv "GITLAB_BACKUP_UPLOAD_PROVIDER") }}
+{{ if ($provider == "AWS") || ($provider == "Google") }}
+    upload:
+      # Fog storage connection settings, see http://fog.io/storage/ .
+      connection:
+        provider: {{ $provider }}
+  {{ if $provider == "AWS" }}
+        region: {{ getenv "GITLAB_BACKUP_UPLOAD_REGION" "eu-west-1" }}
+        aws_access_key_id: {{ getenv "GITLAB_BACKUP_UPLOAD_ACCESS_KEY_ID" "key id" }}
+        aws_secret_access_key: {{ getenv "GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY" "access key" }}
+  {{ else if $provider == "Google" }}
+        google_storage_access_key_id: {{ getenv "GITLAB_BACKUP_UPLOAD_ACCESS_KEY_ID" "key id" }}
+        google_storage_secret_access_key: {{ getenv "GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY" "access key" }}
+  {{ end }}
+      # The remote 'directory' to store your backups. For S3, this would be the bucket name.
+      remote_directory: {{ getenv "GITLAB_BACKUP_UPLOAD_REMOTE_DIRECTORY" "remote_dir" }}
+      # Use multipart uploads when file size reaches 100MB, see
+      #  http://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html
+      multipart_chunk_size: {{ getenv "GITLAB_BACKUP_UPLOAD_MULTIPART_CHUNK_SIZE" "104857600" }}
+      # Turns on AWS Server-Side Encryption with Amazon S3-Managed Keys for backups, this is optional
+      encryption: {{ getenv "GITLAB_BACKUP_UPLOAD_ENCRYPTION" "AES256" }}
+      # Specifies Amazon S3 storage class to use for backups, this is optional
+      storage_class: {{ getenv "GITLAB_BACKUP_UPLOAD_STORAGE_CLASS" "STANDARD" }}
+{{ end }}
 
   ## GitLab Shell settings
   gitlab_shell:

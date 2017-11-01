@@ -36,3 +36,6 @@ after_success: |
       make release TAG="latest"
     fi
   fi
+
+notifications:
+  slack: "${SLACK_TOKEN}"

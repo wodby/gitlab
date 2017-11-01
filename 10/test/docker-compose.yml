@@ -42,9 +42,10 @@ services:
     environment:
 #      - DEBUG=true
       - GITLAB_HOST=gitlab.loc
-#      - GITLAB_LOG_LEVEL=debug
+      - GITLAB_LOG_LEVEL=debug
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
+      - GITLAB_EMAIL_FROM=gitlab@example.com
       - DB_ADAPTER=postgresql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -101,8 +102,10 @@ services:
     environment:
 #      - DEBUG=true
 #      - GITLAB_LOG_LEVEL=debug
+      # From gitlab
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
+      - GITLAB_EMAIL_FROM=gitlab@example.com
       - DB_ADAPTER=postgresql
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -111,6 +114,8 @@ services:
       - DB_NAME=gitlab
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - GITLAB_SMTP_ADDRESS=opensmtpd
+      - GITLAB_SMTP_PORT=25
       - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
@@ -138,17 +143,34 @@ services:
     volumes:
       - data:/mnt/data
 
-#  mailroom:
-#    image: $IMAGE
-#    environment:
+  mailroom:
+    image: $IMAGE
+    environment:
 #      - DEBUG=true
-#      - GITLAB_SMTP_ADDRESS=opensmptd
-#      - GITLAB_SMTP_PORT=25
-#    command: /etc/init.d/mailroom
-#    volumes:
-#      - data:/mnt/data
+      - GITLAB_INCOMING_EMAIL=true
+      # From gitlab
+      - GITLAB_ROOT_PASSWORD=password
+      - GITLAB_ROOT_EMAIL=admin@example.com
+      - DB_ADAPTER=postgresql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=gitlab
+      - DB_PASS=gitlab
+      - DB_NAME=gitlab
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
+      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
+      # openssl rand -hex 16
+      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      # openssl rand -base64 32
+      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+    command: /etc/init.d/mailroom
+    volumes:
+      - data:/mnt/data
 
-  opesmptd:
+  opensmtpd:
     image: wodby/opensmtpd
     environment:
       - RELAY_HOST=smtp.sendgrid.net

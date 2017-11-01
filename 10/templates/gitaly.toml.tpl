@@ -33,7 +33,7 @@ path = "{{ getenv "GITLAB_REPOS_DIR" }}"
 
 [gitaly-ruby]
 # The directory where gitaly-ruby is installed
-dir = "/home/git/gitaly/ruby"
+dir = "{{ getenv "GITALY_DIR" }}/ruby"
 
 [gitlab-shell]
 # The directory where gitlab-shell is installed

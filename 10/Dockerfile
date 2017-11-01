@@ -9,6 +9,7 @@ ENV GITLAB_VER="${GITLAB_VER}" \
 
 ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_SHELL_DIR="/home/git/gitlab-shell" \
+    GITALY_DIR="/home/git/gitaly" \
 
     GITLAB_BACKUP_DIR="${GITLAB_DATA_DIR}/backups" \
     GITLAB_REPOS_DIR="${GITLAB_DATA_DIR}/repositories" \
@@ -39,6 +40,7 @@ RUN set -xe && \
     addgroup -g 1000 -S git && \
 	adduser -u 1000 -D -S -s /bin/bash -G git git && \
 	sed -i '/^git/s/!/*/' /etc/shadow && \
+	echo "PS1='\w\$ '" >> /home/git/.bashrc && \
 
     apk add --update --no-cache --virtual .gitlab-rundeps \
         git \
@@ -83,7 +85,13 @@ RUN set -xe && \
         yarn \
         zlib-dev && \
 
-    apk add --update redis && \
+    # Temporary install package to get specific bins
+    apk add --update redis postgresql && \
+    cp /usr/bin/redis-cli /tmp && \
+    cp /usr/bin/pg_* /tmp && \
+    apk del --purge redis postgresql && \
+    mv /tmp/redis-cli /usr/bin/ && \
+    mv /tmp/pg_* /usr/bin/ && \
 
     # Download gitlab.
     mkdir -p ${GITLAB_DIR} && \
@@ -132,7 +140,7 @@ RUN set -xe && \
     # Install gitaly (build gems from source)
     chown -R git $(go env GOROOT)/pkg && \
     export BUNDLE_FORCE_RUBY_PLATFORM=1 && \
-    su-exec git bundle exec rake "gitlab:gitaly:install[/home/git/gitaly]" && \
+    su-exec git bundle exec rake "gitlab:gitaly:install[${GITALY_DIR}]" && \
 
     cp config/initializers/rack_attack.rb.example config/initializers/rack_attack.rb && \
     rm config/secrets.yml && \
@@ -143,10 +151,6 @@ RUN set -xe && \
     git config --global core.autocrlf input && \
     git config --global gc.auto 0 && \
     git config --global repack.writeBitmaps true && \
-
-    # Leave only redis-cli from redis package
-    cp /usr/bin/redis-cli /usr/bin/redis && \
-    ln -s /usr/local/bin/ruby /usr/bin/ && \
 
     # Configure sudoers
     { \
@@ -159,13 +163,14 @@ RUN set -xe && \
     rm -rf "/home/git/.ssh" && \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh" && \
 
-    # Prepare directories
+    # Misc
     chown git: "/etc/ssh/sshd_config" && \
     mkdir -p ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
     chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ && \
+    ln -s /usr/local/bin/ruby /usr/bin/ && \
 
+    # Clean up
     apk del --purge .gitlab-build-deps && \
-    apk del --purge redis && \
     rm -rf ${GITLAB_DIR}/node_modules && \
     rm -rf /tmp/*
 

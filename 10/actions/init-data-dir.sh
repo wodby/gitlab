@@ -16,6 +16,7 @@ if [[ ! -d "${GITLAB_PUBLIC_DIR}" ]]; then
 fi
 
 if [[ ! -L "${GITLAB_DIR}/public" ]]; then
+    rm -rf  "${GITLAB_DIR}/public"
     ln -sf "${GITLAB_PUBLIC_DIR}" "${GITLAB_DIR}/public"
 fi
 
@@ -32,6 +33,11 @@ chmod g+s "${GITLAB_REPOS_DIR}"
 mkdir -p "${GITLAB_BUILDS_DIR}"
 chmod u+rwX "${GITLAB_BUILDS_DIR}"
 
+if [[ ! -L "${GITLAB_DIR}/builds" ]]; then
+    rm -rf "${GITLAB_DIR}/builds"
+    ln -sf "${GITLAB_BUILDS_DIR}" "${GITLAB_DIR}/builds"
+fi
+
 # Downloads
 mkdir -p "${GITLAB_DOWNLOADS_DIR}"
 chmod u+rwX "${GITLAB_DOWNLOADS_DIR}"
@@ -46,10 +52,6 @@ chmod u+rwX "${GITLAB_ARTIFACTS_DIR}"
 
 if [[ ! -L "${GITLAB_DIR}/shared" ]]; then
     ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared"
-fi
-
-if [[ ! -L "${GITLAB_DIR}/builds" ]]; then
-    ln -sf "${GITLAB_BUILDS_DIR}" "${GITLAB_DIR}/builds"
 fi
 
 # LFS objects

@@ -11,13 +11,15 @@ exec_tpl() {
 }
 
 init_sshd() {
-    mkdir -p "${GITLAB_DATA_DIR}/.ssh"
-    touch "${GITLAB_DATA_DIR}/.ssh/authorized_keys"
-    chmod 700 "${GITLAB_DATA_DIR}/.ssh"
-    chmod 600 "${GITLAB_DATA_DIR}/.ssh/authorized_keys"
+    local ssh_dir="${GITLAB_DATA_DIR}/.ssh"
+
+    mkdir -p "${ssh_dir}"
+    touch "${ssh_dir}/authorized_keys"
+    chmod 700 "${ssh_dir}"
+    chmod 600 "${ssh_dir}/authorized_keys"
 
     # Make sure ~/.ssh symlink won't be broken.
-    mkdir -p "${GITLAB_DATA_DIR}/.ssh"
+    mkdir -p "${ssh_dir}"
 
     printenv | xargs -I{} echo {} | awk ' \
         BEGIN { FS = "=" }; { \
@@ -28,7 +30,7 @@ init_sshd() {
                 \
                 print ""$1"="$2"" \
             } \
-        }' > "${GITLAB_DATA_DIR}/.ssh/environment"
+        }' > "${ssh_dir}/environment"
 
     if [[ ! -e "${GITLAB_DATA_DIR}/ssh/ssh_host_rsa_key" ]]; then
         sudo sshd-generate-keys.sh "${GITLAB_DATA_DIR}/ssh"
@@ -46,7 +48,7 @@ process_templates() {
     exec_tpl "resque.yml.tpl" "${GITLAB_DIR}/config/resque.yml"
     exec_tpl "secrets.yml.tpl" "${GITLAB_DIR}/config/secrets.yml"
 
-    exec_tpl "gitaly.toml.tpl" "/home/git/gitaly/gitaly.toml"
+    exec_tpl "gitaly.toml.tpl" "${GITALY_DIR}/gitaly.toml"
     exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
     exec_tpl "workhorse.toml.tpl" "${GITLAB_DIR}/workhorse.toml"
 
