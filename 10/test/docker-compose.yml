@@ -100,7 +100,7 @@ services:
   sidekiq:
     image: $IMAGE
     environment:
-#      - DEBUG=true
+      - DEBUG=true
 #      - GITLAB_LOG_LEVEL=debug
       # From gitlab
       - GITLAB_ROOT_PASSWORD=password
@@ -146,8 +146,13 @@ services:
   mailroom:
     image: $IMAGE
     environment:
-#      - DEBUG=true
+      - DEBUG=true
       - GITLAB_INCOMING_EMAIL=true
+      - GITLAB_INCOMING_EMAIL_ADDRESS=$IMAP_ADDRESS
+      - GITLAB_INCOMING_EMAIL_USER=$IMAP_USER
+      - GITLAB_INCOMING_EMAIL_PASSWORD=$IMAP_PASSWORD
+      - GITLAB_INCOMING_EMAIL_HOST=$IMAP_HOST
+      - GITLAB_INCOMING_EMAIL_PORT=$IMAP_PORT
       # From gitlab
       - GITLAB_ROOT_PASSWORD=password
       - GITLAB_ROOT_EMAIL=admin@example.com
@@ -159,6 +164,8 @@ services:
       - DB_NAME=gitlab
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - GITLAB_SMTP_ADDRESS=opensmtpd
+      - GITLAB_SMTP_PORT=25
       - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
@@ -173,8 +180,8 @@ services:
   opensmtpd:
     image: wodby/opensmtpd
     environment:
-      - RELAY_HOST=smtp.sendgrid.net
-      - RELAY_USER=apikey
+      - RELAY_HOST=$RELAY_HOST
+      - RELAY_USER=$RELAY_USER
       - RELAY_PASSWORD=$RELAY_PASSWORD
 
 volumes:

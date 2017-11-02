@@ -6,6 +6,8 @@ if [[ -n "${DEBUG}" ]]; then
     set -x
 fi
 
+[[ -f ./env.tmp ]] && source ./env.tmp
+
 run_action() {
     docker-compose -f test/docker-compose.yml exec "${1}" make "${@:2}" -f /usr/local/bin/actions.mk
 }
@@ -20,4 +22,4 @@ run_action nginx check-ready max_try=10
 run_action gitlab init-data-dir
 run_action gitlab migrate-database
 
-docker-compose -f test/docker-compose.yml down
+#docker-compose -f test/docker-compose.yml down
