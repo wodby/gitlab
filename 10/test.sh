@@ -12,7 +12,7 @@ run_action() {
     docker-compose -f test/docker-compose.yml exec "${1}" make "${@:2}" -f /usr/local/bin/actions.mk
 }
 
-docker-compose -f test/docker-compose.yml up -d
+docker-compose -f test/docker-compose.yml up
 
 run_action redis check-ready max_try=10
 run_action postgres check-ready delay_seconds=5 wait_seconds=3 max_try=10

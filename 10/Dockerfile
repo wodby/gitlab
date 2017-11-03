@@ -22,9 +22,10 @@ ENV GITLAB_DIR="/home/git/gitlab" \
 
     # Shared
     GITLAB_SHARED_DIR="${GITLAB_DATA_DIR}/shared" \
-    GITLAB_LFS_OBJECTS_DIR="${GITLAB_DATA_DIR}/shared/lfs-objects" \
-    GITLAB_REGISTRY_DIR="${GITLAB_DATA_DIR}/shared/registry" \
     GITLAB_ARTIFACTS_DIR="${GITLAB_DATA_DIR}/shared/artifacts" \
+    GITLAB_LFS_OBJECTS_DIR="${GITLAB_DATA_DIR}/shared/lfs-objects" \
+    GITLAB_PAGES_DIR="${GITLAB_DATA_DIR}/shared/pages" \
+    GITLAB_REGISTRY_DIR="${GITLAB_DATA_DIR}/shared/registry" \
 
     GITLAB_URL="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
     GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz" \
@@ -173,6 +174,22 @@ RUN set -xe && \
     apk del --purge .gitlab-build-deps && \
     rm -rf ${GITLAB_DIR}/node_modules && \
     rm -rf /tmp/*
+
+RUN mkdir -p \
+        "${GITLAB_DATA_DIR}" \
+        "${GITLAB_BACKUP_DIR}" \
+        "${GITLAB_REPOS_DIR}" \
+        "${GITLAB_BUILDS_DIR}" \
+        "${GITLAB_PUBLIC_DIR}" \
+        "${GITLAB_TEMP_DIR}" \
+        "${GITLAB_DOWNLOADS_DIR}" \
+        "${GITLAB_SHARED_DIR}" \
+        "${GITLAB_ARTIFACTS_DIR}" \
+        "${GITLAB_LFS_OBJECTS_DIR}" \
+        "${GITLAB_PAGES_DIR}" \
+        "${GITLAB_REGISTRY_DIR}" && \
+
+    chown -R git:git "${GITLAB_DATA_DIR}"
 
 ENV EXECJS_RUNTIME "Disabled"
 

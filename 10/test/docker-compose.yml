@@ -8,8 +8,10 @@ services:
       - workhorse
     ports:
       - "80:80"
-#    environment:
-#      - DEBUG=true
+    environment:
+      DEBUG: 1
+      NGINX_ERROR_LOG_LEVEL: debug
+      NGINX_GITLAB_PAGES_DOMAIN: pages.gitlab.loc
     volumes:
       - data:/mnt/data
 
@@ -19,19 +21,11 @@ services:
   postgres:
     image: wodby/postgres:9.6
     environment:
-    - POSTGRES_USER=gitlab
-    - POSTGRES_PASSWORD=gitlab
-    - POSTGRES_DB=gitlab
-    - POSTGRES_DB_EXTENSIONS=pg_trgm
-
-#  runner:
-#    image: gitlab/gitlab-runner:alpine-v9.5.0
-#    depends_on:
-#      - gitlab
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-##      - ./config.toml:/etc/gitlab-runner/config.toml
-#      - data:/mnt/data
+      DEBUG: 1
+      POSTGRES_USER: gitlab
+      POSTGRES_PASSWORD: gitlab
+      POSTGRES_DB: gitlab
+      POSTGRES_DB_EXTENSIONS: pg_trgm
 
   gitlab:
     image: $IMAGE
@@ -40,29 +34,39 @@ services:
       - postgres
       - gitaly
     environment:
-#      - DEBUG=true
-      - GITLAB_HOST=gitlab.loc
-      - GITLAB_LOG_LEVEL=debug
-      - GITLAB_ROOT_PASSWORD=password
-      - GITLAB_ROOT_EMAIL=admin@example.com
-      - GITLAB_EMAIL_FROM=gitlab@example.com
-      - DB_ADAPTER=postgresql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=gitlab
-      - DB_PASS=gitlab
-      - DB_NAME=gitlab
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - GITLAB_SMTP_ADDRESS=opensmtpd
-      - GITLAB_SMTP_PORT=25
-      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
-      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
-      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
+      DEBUG: 1
+#      GITLAB_LOG_LEVEL: debug
+      GITLAB_PAGES_ENABLED: "true"
+      GITLAB_PAGES_HOST: pages.gitlab.loc
+      GITLAB_PAGES_PORT: 80
+      GITLAB_PAGES_HTTPS: "false"
+      GITLAB_INCOMING_EMAIL: "true"
+      GITLAB_INCOMING_EMAIL_ADDRESS: $IMAP_ADDRESS
+      GITLAB_INCOMING_EMAIL_USER: $IMAP_USER
+      GITLAB_INCOMING_EMAIL_PASSWORD: $IMAP_PASSWORD
+      GITLAB_INCOMING_EMAIL_HOST: $IMAP_HOST
+      GITLAB_INCOMING_EMAIL_PORT: $IMAP_PORT
+      GITLAB_HOST: gitlab.loc
+      GITLAB_ROOT_PASSWORD: password
+      GITLAB_ROOT_EMAIL: admin@example.com
+      GITLAB_EMAIL_FROM: gitlab@example.com
+      DB_ADAPTER: postgresql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: gitlab
+      DB_PASS: gitlab
+      DB_NAME: gitlab
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GITLAB_SMTP_ADDRESS: opensmtpd
+      GITLAB_SMTP_PORT: 25
+      GITLAB_SECRETS_DB_KEY_BASE: long-and-random-alphanumeric-string
+      GITLAB_SECRETS_SECRET_KEY_BASE: long-and-random-alphanumeric-string
+      GITLAB_SECRETS_OTP_KEY_BASE: long-and-random-alphanumeric-string
       # openssl rand -hex 16
-      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      GITLAB_SECRETS_SHELL: 892ce4f50cd917845a02ba3744a51a4d
       # openssl rand -base64 32
-      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+      GITLAB_SECRETS_WORKHORSE: Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
     expose:
       - "8080"
     volumes:
@@ -70,8 +74,8 @@ services:
 
   gitaly:
     image: $IMAGE
-#    environment:
-#      - DEBUG=true
+    environment:
+      DEBUG: 1
     command: /etc/init.d/gitaly
     expose:
       - "9999"
@@ -84,13 +88,13 @@ services:
       - gitlab
       - redis
     environment:
-#      - DEBUG=true
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      DEBUG: 1
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       # openssl rand -base64 32
-      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+      GITLAB_SECRETS_WORKHORSE: Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
       # openssl rand -hex 16
-      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      GITLAB_SECRETS_SHELL: 892ce4f50cd917845a02ba3744a51a4d
     command: /etc/init.d/workhorse
     expose:
       - "8181"
@@ -100,29 +104,38 @@ services:
   sidekiq:
     image: $IMAGE
     environment:
-      - DEBUG=true
-#      - GITLAB_LOG_LEVEL=debug
-      # From gitlab
-      - GITLAB_ROOT_PASSWORD=password
-      - GITLAB_ROOT_EMAIL=admin@example.com
-      - GITLAB_EMAIL_FROM=gitlab@example.com
-      - DB_ADAPTER=postgresql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=gitlab
-      - DB_PASS=gitlab
-      - DB_NAME=gitlab
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - GITLAB_SMTP_ADDRESS=opensmtpd
-      - GITLAB_SMTP_PORT=25
-      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
-      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
-      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
+      DEBUG: 1
+#      GITLAB_LOG_LEVEL: debug
+      GITLAB_PAGES_ENABLED: "true"
+      GITLAB_PAGES_HOST: pages.gitlab.loc
+      GITLAB_PAGES_PORT: 80
+      GITLAB_PAGES_HTTPS: "false"
+      GITLAB_INCOMING_EMAIL: "true"
+      GITLAB_INCOMING_EMAIL_ADDRESS: $IMAP_ADDRESS
+      GITLAB_INCOMING_EMAIL_USER: $IMAP_USER
+      GITLAB_INCOMING_EMAIL_PASSWORD: $IMAP_PASSWORD
+      GITLAB_INCOMING_EMAIL_HOST: $IMAP_HOST
+      GITLAB_INCOMING_EMAIL_PORT: $IMAP_PORT
+      GITLAB_ROOT_PASSWORD: password
+      GITLAB_ROOT_EMAIL: admin@example.com
+      GITLAB_EMAIL_FROM: gitlab@example.com
+      DB_ADAPTER: postgresql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: gitlab
+      DB_PASS: gitlab
+      DB_NAME: gitlab
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GITLAB_SMTP_ADDRESS: opensmtpd
+      GITLAB_SMTP_PORT: 25
+      GITLAB_SECRETS_DB_KEY_BASE: long-and-random-alphanumeric-string
+      GITLAB_SECRETS_SECRET_KEY_BASE: long-and-random-alphanumeric-string
+      GITLAB_SECRETS_OTP_KEY_BASE: long-and-random-alphanumeric-string
       # openssl rand -hex 16
-      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      GITLAB_SECRETS_SHELL: 892ce4f50cd917845a02ba3744a51a4d
       # openssl rand -base64 32
-      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+      GITLAB_SECRETS_WORKHORSE: Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
     command: /etc/init.d/sidekiq
     volumes:
       - data:/mnt/data
@@ -130,12 +143,12 @@ services:
   sshd:
     image: $IMAGE
     environment:
-#      - DEBUG=true
-      - GITLAB_SHELL_LOG_LEVEL=debug
-      - GITLAB_SHELL_REDIS_HOST=redis
-      - GITLAB_SHELL_REDIS_PORT=6379
+      DEBUG: 1
+      GITLAB_SHELL_LOG_LEVEL: debug
+      GITLAB_SHELL_REDIS_HOST: redis
+      GITLAB_SHELL_REDIS_PORT: 6379
       # openssl rand -hex 16
-      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      GITLAB_SECRETS_SHELL: 892ce4f50cd917845a02ba3744a51a4d
     working_dir: /home/git/gitlab-shell
     command: sudo /usr/sbin/sshd -De
     ports:
@@ -146,43 +159,66 @@ services:
   mailroom:
     image: $IMAGE
     environment:
-      - DEBUG=true
-      - GITLAB_INCOMING_EMAIL=true
-      - GITLAB_INCOMING_EMAIL_ADDRESS=$IMAP_ADDRESS
-      - GITLAB_INCOMING_EMAIL_USER=$IMAP_USER
-      - GITLAB_INCOMING_EMAIL_PASSWORD=$IMAP_PASSWORD
-      - GITLAB_INCOMING_EMAIL_HOST=$IMAP_HOST
-      - GITLAB_INCOMING_EMAIL_PORT=$IMAP_PORT
-      # From gitlab
-      - GITLAB_ROOT_PASSWORD=password
-      - GITLAB_ROOT_EMAIL=admin@example.com
-      - DB_ADAPTER=postgresql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=gitlab
-      - DB_PASS=gitlab
-      - DB_NAME=gitlab
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - GITLAB_SMTP_ADDRESS=opensmtpd
-      - GITLAB_SMTP_PORT=25
-      - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
-      - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
-      - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
+      DEBUG: 1
+#      GITLAB_LOG_LEVEL: debug
+      GITLAB_PAGES_ENABLED: "true"
+      GITLAB_PAGES_HOST: pages.gitlab.loc
+      GITLAB_PAGES_PORT: 80
+      GITLAB_PAGES_HTTPS: "false"
+      GITLAB_INCOMING_EMAIL: "true"
+      GITLAB_INCOMING_EMAIL_ADDRESS: $IMAP_ADDRESS
+      GITLAB_INCOMING_EMAIL_USER: $IMAP_USER
+      GITLAB_INCOMING_EMAIL_PASSWORD: $IMAP_PASSWORD
+      GITLAB_INCOMING_EMAIL_HOST: $IMAP_HOST
+      GITLAB_INCOMING_EMAIL_PORT: $IMAP_PORT
+      GITLAB_ROOT_PASSWORD: password
+      GITLAB_ROOT_EMAIL: admin@example.com
+      DB_ADAPTER: postgresql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: gitlab
+      DB_PASS: gitlab
+      DB_NAME: gitlab
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GITLAB_SMTP_ADDRESS: opensmtpd
+      GITLAB_SMTP_PORT: 25
+      GITLAB_SECRETS_DB_KEY_BASE: long-and-random-alphanumeric-string
+      GITLAB_SECRETS_SECRET_KEY_BASE: long-and-random-alphanumeric-string
+      GITLAB_SECRETS_OTP_KEY_BASE: long-and-random-alphanumeric-string
       # openssl rand -hex 16
-      - GITLAB_SECRETS_SHELL=892ce4f50cd917845a02ba3744a51a4d
+      GITLAB_SECRETS_SHELL: 892ce4f50cd917845a02ba3744a51a4d
       # openssl rand -base64 32
-      - GITLAB_SECRETS_WORKHORSE=Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
+      GITLAB_SECRETS_WORKHORSE: Wh4/VODsUdhUQMXSaqYEh3xCbqZ0KRE9j8Z/JtPpjfQ=
     command: /etc/init.d/mailroom
+    volumes:
+      - data:/mnt/data
+
+  pages:
+    image: $IMAGE
+    environment:
+      DEBUG: 1
+      GITLAB_PAGES_DOMAIN: pages.gitlab.loc
+    command: /etc/init.d/pages
     volumes:
       - data:/mnt/data
 
   opensmtpd:
     image: wodby/opensmtpd
     environment:
-      - RELAY_HOST=$RELAY_HOST
-      - RELAY_USER=$RELAY_USER
-      - RELAY_PASSWORD=$RELAY_PASSWORD
+      DEBUG: 1
+      RELAY_HOST: $RELAY_HOST
+      RELAY_USER: $RELAY_USER
+      RELAY_PASSWORD: $RELAY_PASSWORD
+
+#  runner:
+#    image: gitlab/gitlab-runner:alpine-v9.5.0
+#    depends_on:
+#      - gitlab
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+##      - ./config.toml:/etc/gitlab-runner/config.toml
+#      - data:/mnt/data
 
 volumes:
   data:

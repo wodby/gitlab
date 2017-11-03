@@ -54,6 +54,7 @@ process_templates() {
 
     exec_tpl "init.d/gitaly.tpl" "/etc/init.d/gitaly"
     exec_tpl "init.d/mailroom.tpl" "/etc/init.d/mailroom"
+    exec_tpl "init.d/pages.tpl" "/etc/init.d/pages"
     exec_tpl "init.d/sidekiq.tpl" "/etc/init.d/sidekiq"
     exec_tpl "init.d/workhorse.tpl" "/etc/init.d/workhorse"
 }
@@ -75,7 +76,7 @@ sudo fix-permissions.sh git git "${GITLAB_DATA_DIR}"
 process_templates
 process_secrets
 
-chmod +x /etc/init.d/gitaly /etc/init.d/mailroom /etc/init.d/sidekiq /etc/init.d/workhorse
+chmod +x /etc/init.d/gitaly /etc/init.d/mailroom /etc/init.d/sidekiq /etc/init.d/workhorse /etc/init.d/pages
 
 mkdir -p "${GITLAB_REPOS_DIR}"
 

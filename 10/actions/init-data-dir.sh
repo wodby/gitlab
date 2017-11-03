@@ -10,12 +10,10 @@ echo "Initializing data dir..."
 chmod 755 "${GITLAB_DATA_DIR}"
 
 # Public
-if [[ ! -d "${GITLAB_PUBLIC_DIR}" ]]; then
-    mkdir -p "${GITLAB_PUBLIC_DIR}"
-    rsync -rlt "${GITLAB_DIR}/public/" "${GITLAB_PUBLIC_DIR}"
-fi
+mkdir -p "${GITLAB_PUBLIC_DIR}"
 
 if [[ ! -L "${GITLAB_DIR}/public" ]]; then
+    rsync -rlt "${GITLAB_DIR}/public/" "${GITLAB_PUBLIC_DIR}"
     rm -rf  "${GITLAB_DIR}/public"
     ln -sf "${GITLAB_PUBLIC_DIR}" "${GITLAB_DIR}/public"
 fi
@@ -46,23 +44,26 @@ chmod u+rwX "${GITLAB_DOWNLOADS_DIR}"
 mkdir -p "${GITLAB_SHARED_DIR}"
 chmod u+rwX "${GITLAB_SHARED_DIR}"
 
+if [[ ! -L "${GITLAB_DIR}/shared" ]]; then
+    rm -rf "${GITLAB_DIR}/shared"
+    ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared"
+fi
+
 # Artifacts
 mkdir -p "${GITLAB_ARTIFACTS_DIR}"
 chmod u+rwX "${GITLAB_ARTIFACTS_DIR}"
 
-if [[ ! -L "${GITLAB_DIR}/shared" ]]; then
-    ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared"
-fi
+# Pages
+mkdir -p "${GITLAB_PAGES_DIR}"
+chmod u+rwX "${GITLAB_PAGES_DIR}"
 
 # LFS objects
 mkdir -p "${GITLAB_LFS_OBJECTS_DIR}"
 chmod u+rwX "${GITLAB_LFS_OBJECTS_DIR}"
 
 # Registry
-if [[ "${GITLAB_REGISTRY_ENABLED}" == true ]]; then
-    mkdir -p "${GITLAB_REGISTRY_DIR}"
-    chmod u+rwX "${GITLAB_REGISTRY_DIR}"
-fi
+mkdir -p "${GITLAB_REGISTRY_DIR}"
+chmod u+rwX "${GITLAB_REGISTRY_DIR}"
 
 # Backups
 mkdir -p "${GITLAB_BACKUP_DIR}"
