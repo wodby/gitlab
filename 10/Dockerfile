@@ -158,7 +158,6 @@ RUN set -xe && \
         echo -n 'git ALL=(root) NOPASSWD: ' ; \
         echo -n '/usr/local/bin/sshd-generate-keys.sh, ' ; \
         echo -n '/usr/local/bin/fix-permissions.sh, ' ; \
-        echo -n '/usr/local/bin/gotpl, ' ; \
         echo '/usr/sbin/sshd' ; \
     } | tee /etc/sudoers.d/git && \
 
