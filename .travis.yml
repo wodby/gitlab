@@ -11,9 +11,9 @@ env:
     - DOCKER_VERSION=17.06.2
     - LATEST_TAG=10
   matrix:
-    - TAG=10
-    - TAG=10.1 GITLAB_VER=10.1.1
-    - TAG=10.0 GITLAB_VER=10.0.5
+    - LINE=10 TAG=10 GITLAB_VER=10.1.1
+    - LINE=10 TAG=10.1 GITLAB_VER=10.1.1
+    - LINE=10 TAG=10.0 GITLAB_VER=10.0.5
 
 install:
   - sudo apt-get update
@@ -24,7 +24,7 @@ install:
   - sudo mv docker-compose /usr/local/bin
 
 script:
-  - cd ./"${TAG}"
+  - cd ./"${LINE}"
   - make && make test
 
 after_success: |
