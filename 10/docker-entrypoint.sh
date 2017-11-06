@@ -18,9 +18,6 @@ init_sshd() {
     chmod 700 "${ssh_dir}"
     chmod 600 "${ssh_dir}/authorized_keys"
 
-    # Make sure ~/.ssh symlink won't be broken.
-    mkdir -p "${ssh_dir}"
-
     printenv | xargs -I{} echo {} | awk ' \
         BEGIN { FS = "=" }; { \
             if ($1 != "HOME" \
@@ -36,7 +33,7 @@ init_sshd() {
         sudo sshd-generate-keys.sh "${GITLAB_DATA_DIR}/ssh"
     fi
 
-    exec_tpl "sshd_config.tpl" "/etc/ssh/sshd_config"
+    sudo gotpl "/etc/gotpl/sshd_config.tpl" > "/etc/ssh/sshd_config"
 }
 
 process_templates() {

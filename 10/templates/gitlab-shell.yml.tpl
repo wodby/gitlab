@@ -38,8 +38,8 @@ secret_file: "{{ getenv "GITLAB_DIR" }}/.gitlab_shell_secret"
 # Redis settings used for pushing commit notices to gitlab
 redis:
   bin: /usr/bin/redis-cli
-  host: {{ getenv "GITLAB_SHELL_REDIS_HOST" "redis" }}
-  port: {{ getenv "GITLAB_SHELL_REDIS_PORT" "6379" }}
+  host: {{ getenv "REDIS_HOST" "redis" }}
+  port: {{ getenv "REDIS_PORT" "6379" }}
   {{ if getenv "REDIS_PASS" }}
   pass: {{ getenv "REDIS_PASS" }}
   {{ end }}
@@ -61,7 +61,7 @@ log_file: "/home/git/gitlab-shell/gitlab-shell.log"
 #log_file: "/proc/self/fd/2"
 
 # Log level. INFO by default
-log_level: {{ getenv "GITLAB_SHELL_LOG_LEVEL" "DEBUG" }}
+log_level: {{ getenv "GITLAB_SHELL_LOG_LEVEL" "INFO" }}
 
 # Audit usernames.
 # Set to true to see real usernames in the logs instead of key ids, which is easier to follow, but

@@ -18,6 +18,7 @@ case "${DB_ADAPTER}" in
       ;;
 esac
 
+# DB init for the first run.
 if [[ -z "${COUNT}" || "${COUNT}" -eq 0 ]]; then
     echo "Setting up GitLab for the first run. Please be patient, this could take a while..."
     force=yes bundle exec rake gitlab:setup GITLAB_ROOT_PASSWORD="${GITLAB_ROOT_PASSWORD}" GITLAB_ROOT_EMAIL="${GITLAB_ROOT_EMAIL}" >/dev/null

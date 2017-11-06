@@ -1,4 +1,4 @@
-.PHONY: init-data-dir migrate-database backup restore check-ready check-live
+.PHONY: init-data-dir init-db backup restore check-ready check-live
 
 check_defined = \
     $(strip $(foreach 1,$1, \
@@ -18,8 +18,8 @@ default: check-ready
 init-data-dir:
 	init-data-dir.sh
 
-migrate-database:
-	migrate-database.sh
+init-db:
+	init-db.sh
 
 backup:
 	backup.sh $(skip)

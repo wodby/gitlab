@@ -5,10 +5,10 @@ production: &base
     https: {{ getenv "GITLAB_HTTPS" "false" }}
     trusted_proxies:
     email_enabled: {{ getenv "GITLAB_EMAIL_ENABLED" "true" }}
-    email_from: {{ getenv "GITLAB_EMAIL_FROM" "example@example.com" }}
+    email_from: {{ getenv "GITLAB_EMAIL_FROM" "gitlab@example.com" }}
     email_display_name: {{ getenv "GITLAB_EMAIL_DISPLAY_NAME" "GitLab" }}
     email_reply_to: {{ getenv "GITLAB_EMAIL_REPLY_TO" "noreply@example.com" }}
-    email_subject_suffix: {{ getenv "GITLAB_EMAIL_SUBJECT_SUFFIX" "" }}
+    email_subject_suffix: {{ getenv "GITLAB_EMAIL_SUBJECT_SUFFIX" }}
     default_projects_features:
       issues: true
       merge_requests: true
@@ -16,6 +16,7 @@ production: &base
       snippets: true
       builds: true
       container_registry: true
+    repository_downloads_path: {{ getenv "GITLAB_DOWNLOADS_DIR" }}
 
   incoming_email:
     enabled: {{ getenv "GITLAB_INCOMING_EMAIL" "false" }}
@@ -37,7 +38,7 @@ production: &base
 
   pages:
     enabled: {{ getenv "GITLAB_PAGES_ENABLED" "false" }}
-    host: {{ getenv "GITLAB_PAGES_HOST" "example.com" }}
+    host: {{ getenv "GITLAB_PAGES_HOST" "pages.example.com" }}
     port: {{ getenv "GITLAB_PAGES_PORT" "80" }}
     https: {{ getenv "GITLAB_PAGES_HTTPS" "false" }}
 
@@ -130,14 +131,14 @@ production: &base
       connection:
         provider: {{ $provider }}
   {{ if eq $provider "AWS" }}
-        region: {{ getenv "GITLAB_BACKUP_UPLOAD_REGION" "eu-west-1" }}
-        aws_access_key_id: {{ getenv "GITLAB_BACKUP_UPLOAD_ACCESS_KEY_ID" "key id" }}
-        aws_secret_access_key: {{ getenv "GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY" "access key" }}
+        region: {{ getenv "GITLAB_BACKUP_AWS_UPLOAD_REGION" "eu-west-1" }}
+        aws_access_key_id: {{ getenv "GITLAB_BACKUP_UPLOAD_ACCESS_KEY_ID" }}
+        aws_secret_access_key: {{ getenv "GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY" }}
   {{ else if eq $provider "Google" }}
-        google_storage_access_key_id: {{ getenv "GITLAB_BACKUP_UPLOAD_ACCESS_KEY_ID" "key id" }}
-        google_storage_secret_access_key: {{ getenv "GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY" "access key" }}
+        google_storage_access_key_id: {{ getenv "GITLAB_BACKUP_UPLOAD_ACCESS_KEY_ID" }}
+        google_storage_secret_access_key: {{ getenv "GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY" }}
   {{ end }}
-      remote_directory: {{ getenv "GITLAB_BACKUP_UPLOAD_REMOTE_DIRECTORY" "remote_dir" }}
+      remote_directory: {{ getenv "GITLAB_BACKUP_UPLOAD_REMOTE_DIRECTORY" }}
       multipart_chunk_size: {{ getenv "GITLAB_BACKUP_UPLOAD_MULTIPART_CHUNK_SIZE" "104857600" }}
       encryption: {{ getenv "GITLAB_BACKUP_UPLOAD_ENCRYPTION" "AES256" }}
       storage_class: {{ getenv "GITLAB_BACKUP_UPLOAD_STORAGE_CLASS" "STANDARD" }}

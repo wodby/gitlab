@@ -158,24 +158,19 @@ RUN set -xe && \
         echo -n 'git ALL=(root) NOPASSWD: ' ; \
         echo -n '/usr/local/bin/sshd-generate-keys.sh, ' ; \
         echo -n '/usr/local/bin/fix-permissions.sh, ' ; \
+        echo -n '/usr/local/bin/gotpl, ' ; \
         echo '/usr/sbin/sshd' ; \
     } | tee /etc/sudoers.d/git && \
 
     rm -rf "/home/git/.ssh" && \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh" && \
 
-    # Misc
-    chown git: "/etc/ssh/sshd_config" && \
+    # Prepare directories and symlinks
     mkdir -p ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
     chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ && \
     ln -s /usr/local/bin/ruby /usr/bin/ && \
 
-    # Clean up
-    apk del --purge .gitlab-build-deps && \
-    rm -rf ${GITLAB_DIR}/node_modules && \
-    rm -rf /tmp/*
-
-RUN mkdir -p \
+    mkdir -p \
         "${GITLAB_DATA_DIR}" \
         "${GITLAB_BACKUP_DIR}" \
         "${GITLAB_REPOS_DIR}" \
@@ -189,7 +184,18 @@ RUN mkdir -p \
         "${GITLAB_PAGES_DIR}" \
         "${GITLAB_REGISTRY_DIR}" && \
 
-    chown -R git:git "${GITLAB_DATA_DIR}"
+    chown -R git:git "${GITLAB_DATA_DIR}" && \
+
+    mv "${GITLAB_DIR}/public" "${GITLAB_DIR}/orig_public" && \
+    rm -rf "${GITLAB_DIR}/shared" "${GITLAB_DIR}/builds" && \
+    ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared" && \
+    ln -sf "${GITLAB_BUILDS_DIR}" "${GITLAB_DIR}/builds" && \
+    ln -sf "${GITLAB_PUBLIC_DIR}" "${GITLAB_DIR}/public" && \
+
+    # Clean up
+    apk del --purge .gitlab-build-deps && \
+    rm -rf ${GITLAB_DIR}/node_modules && \
+    rm -rf /tmp/*
 
 ENV EXECJS_RUNTIME "Disabled"
 
