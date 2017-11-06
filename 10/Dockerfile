@@ -167,7 +167,7 @@ RUN set -xe && \
 
     # Prepare directories and symlinks
     mkdir -p ${GITLAB_DIR}/tmp/pids/ ${GITLAB_DIR}/tmp/sockets/ && \
-    chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ && \
+    chown -R git:git /etc/init.d/ ${GITLAB_DIR}/tmp/ /etc/ssh/sshd_config && \
     ln -s /usr/local/bin/ruby /usr/bin/ && \
 
     mkdir -p \
