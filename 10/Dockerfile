@@ -187,9 +187,9 @@ RUN set -xe && \
 
     mv "${GITLAB_DIR}/public" "${GITLAB_DIR}/orig_public" && \
     rm -rf "${GITLAB_DIR}/shared" "${GITLAB_DIR}/builds" && \
-    ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared" && \
-    ln -sf "${GITLAB_BUILDS_DIR}" "${GITLAB_DIR}/builds" && \
-    ln -sf "${GITLAB_PUBLIC_DIR}" "${GITLAB_DIR}/public" && \
+    su-exec git ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared" && \
+    su-exec git ln -sf "${GITLAB_BUILDS_DIR}" "${GITLAB_DIR}/builds" && \
+    su-exec git ln -sf "${GITLAB_PUBLIC_DIR}" "${GITLAB_DIR}/public" && \
 
     # Clean up
     apk del --purge .gitlab-build-deps && \
