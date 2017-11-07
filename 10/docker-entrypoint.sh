@@ -33,7 +33,7 @@ init_sshd() {
         sudo sshd-generate-keys.sh "${GITLAB_DATA_DIR}/ssh"
     fi
 
-    sudo gotpl "/etc/gotpl/sshd_config.tpl" > "/etc/ssh/sshd_config"
+    exec_tpl "sshd_config.tpl" "/etc/ssh/sshd_config"
 }
 
 process_templates() {
