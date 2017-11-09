@@ -64,29 +64,39 @@ production: &base
       cron: "0 * * * *"
 
   registry:
+    enabled: {{ getenv "GITLAB_REGISTRY_ENABLED" "false" }}
+    host: {{ getenv "GITLAB_REGISTRY_HOST" }}
+    port: {{ getenv "GITLAB_REGISTRY_PORT" "5005" }}
+    api_url: {{ getenv "GITLAB_REGISTRY_API_URL" "http://localhost:5000/" }}
+    key: {{ getenv "GITLAB_REGISTRY_KEY" }}
+    path: {{ getenv "GITLAB_REGISTRY_PATH" "shared/registry" }}
+    issuer: {{ getenv "GITLAB_REGISTRY_ISSUER" "gitlab-issuer" }}
 
   gitlab_ci:
+     all_broken_builds: {{ getenv "GITLAB_CI_ALL_BROKEN_BUILDS" "true" }}
+     add_pusher: {{ getenv "GITLAB_CI_ADD_PUSHER" "true" }}
+     builds_path: {{ getenv "GITLAB_CI_BUILDS_PATH" "builds/" }}
 
   ldap:
-    enabled: false
+    enabled: {{ getenv "GITLAB_LDAP_ENABLED" "false" }}
     servers:
       main:
-        label: 'LDAP'
-        host: '_your_ldap_server'
-        port: 389
-        uid: 'sAMAccountName'
-        bind_dn: '_the_full_dn_of_the_user_you_will_bind_with'
-        password: '_the_password_of_the_bind_user'
-        encryption: 'plain'
-        verify_certificates: true
-        ca_file: ''
-        ssl_version: ''
-        timeout: 10
-        active_directory: true
-        allow_username_or_email_login: false
-        block_auto_created_users: false
-        base: ''
-        user_filter: ''
+        label: '{{ getenv "GITLAB_LDAP_LABEL" "LDAP" }}'
+        host: '{{ getenv "GITLAB_LDAP_HOST" }}'
+        port: {{ getenv "GITLAB_LDAP_PORT" "389" }}
+        uid: '{{ getenv "GITLAB_LDAP_UID" "sAMAccountName" }}'
+        bind_dn: '{{ getenv "GITLAB_LDAP_BIND_DN" }}'
+        password: '{{ getenv "GITLAB_LDAP_PASSWORD" }}'
+        encryption: '{{ getenv "GITLAB_LDAP_ENCRYPTION" "plain" }}'
+        verify_certificates: {{ getenv "GITLAB_LDAP_VERIFY_CERTIFICATES" "true" }}
+        ca_file: '{{ getenv "GITLAB_LDAP_CA_FILE" }}'
+        ssl_version: '{{ getenv "GITLAB_LDAP_SSL_VERSION" }}'
+        timeout: {{ getenv "GITLAB_LDAP_TIMEOUT" "10" }}
+        active_directory: {{ getenv "GITLAB_LDAP_ACTIVE_DIRECTORY" "true" }}
+        allow_username_or_email_login: {{ getenv "GITLAB_LDAP_ALLOW_USERNAME_OR_EMAIL_LOGIN" "false" }}
+        block_auto_created_users: {{ getenv "GITLAB_LDAP_BLOCK_AUTO_CREATED_USERS" "false" }}
+        base: '{{ getenv "GITLAB_LDAP_BASE" }}'
+        user_filter: '{{ getenv "GITLAB_LDAP_USER_FILTER" }}'
         attributes:
           username: ['uid', 'userid', 'sAMAccountName']
           email:    ['mail', 'email', 'userPrincipalName']
@@ -115,10 +125,6 @@ production: &base
         path: {{ getenv "GITLAB_REPOS_DIR" }}
         gitaly_address: tcp://gitaly:9999
         # gitaly_token: 'special token'
-        failure_count_threshold: 10
-        failure_wait_time: 30
-        failure_reset_time: 1800
-        storage_timeout: 30
 
   backup:
     path: {{ getenv  "GITLAB_BACKUP_DIR" }}

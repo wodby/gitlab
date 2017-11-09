@@ -16,8 +16,8 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 
 | Image tag (Dockerfile)                                                      | Gitlab |
 | --------------------------------------------------------------------------- | ------ |
-| [10, 10.1 (latest)](https://github.com/wodby/gitlab/tree/master/Dockerfile) | 10.1.1 |
-| [10.0](https://github.com/wodby/gitlab/tree/master/Dockerfile)              | 10.0.5 |
+| [10, 10.1 (latest)](https://github.com/wodby/gitlab/tree/master/Dockerfile) | 10.1.2 |
+| [10.0](https://github.com/wodby/gitlab/tree/master/Dockerfile)              | 10.0.6 |
 
 ## Environment Variables
 
@@ -42,6 +42,9 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 | GITLAB_BACKUP_UPLOAD_SECRET_ACCESS_KEY    |                                       |              |
 | GITLAB_BACKUP_UPLOAD_STORAGE_CLASS        | STANDARD                              |              |
 | GITLAB_CDN_HOST                           |                                       |              |
+| GITLAB_CI_ADD_PUSHER                      | true                                  |              |
+| GITLAB_CI_ALL_BROKEN_BUILDS               | true                                  |              |
+| GITLAB_CI_BUILDS_PATH                     | builds/                               |              |
 | GITLAB_EMAIL_DISPLAY_NAME                 | GitLab                                |              |
 | GITLAB_EMAIL_ENABLED                      | true                                  |              |
 | GITLAB_EMAIL_FROM                         | gitlab@example.com                    |              |
@@ -59,6 +62,23 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 | GITLAB_INCOMING_EMAIL_SSL                 | true                                  |              |
 | GITLAB_INCOMING_EMAIL_START_TLS           | false                                 |              |
 | GITLAB_INCOMING_EMAIL_USER                | gitlab-incoming@gmail.com             |              |
+| GITLAB_LDAP_ACTIVE_DIRECTORY              | true                                  |              |
+| GITLAB_LDAP_ALLOW_USERNAME_OR_EMAIL_LOGIN | false                                 |              |
+| GITLAB_LDAP_BASE                          |                                       |              |
+| GITLAB_LDAP_BIND_DN                       |                                       |              |
+| GITLAB_LDAP_BLOCK_AUTO_CREATED_USERS      | false                                 |              |
+| GITLAB_LDAP_CA_FILE                       |                                       |              |
+| GITLAB_LDAP_ENABLED                       | false                                 |              |
+| GITLAB_LDAP_ENCRYPTION                    | plain                                 |              |
+| GITLAB_LDAP_HOST                          |                                       |              |
+| GITLAB_LDAP_LABEL                         | LDAP                                  |              |
+| GITLAB_LDAP_PASSWORD                      |                                       |              |
+| GITLAB_LDAP_PORT                          | 389                                   |              |
+| GITLAB_LDAP_SSL_VERSION                   |                                       |              |
+| GITLAB_LDAP_TIMEOUT                       | 10                                    |              |
+| GITLAB_LDAP_UID                           | sAMAccountName                        |              |
+| GITLAB_LDAP_USER_FILTER                   |                                       |              |
+| GITLAB_LDAP_VERIFY_CERTIFICATES           | true                                  |              |
 | GITLAB_LFS_ENABLED                        | true                                  |              |
 | GITLAB_LOG_LEVEL                          | info                                  |              |
 | GITLAB_PAGES_DOMAIN                       |                                       |              |
@@ -66,6 +86,13 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 | GITLAB_PAGES_HOST                         | pages.example.com                     |              |
 | GITLAB_PAGES_HTTPS                        | false                                 |              |
 | GITLAB_PAGES_PORT                         | 80                                    |              |
+| GITLAB_REGISTRY_API_URL                   | http://localhost:5000/                |              |
+| GITLAB_REGISTRY_ENABLED                   | false                                 |              |
+| GITLAB_REGISTRY_HOST                      |                                       |              |
+| GITLAB_REGISTRY_ISSUER                    | gitlab-issuer                         |              |
+| GITLAB_REGISTRY_KEY                       |                                       |              |
+| GITLAB_REGISTRY_PATH                      | shared/registry                       |              |
+| GITLAB_REGISTRY_PORT                      | 5005                                  |              |
 | GITLAB_ROOT_EMAIL                         |                                       |              |
 | GITLAB_ROOT_PASSWORD                      | 80                                    |              |
 | GITLAB_SECRETS_DB_KEY_BASE                |                                       |              |
