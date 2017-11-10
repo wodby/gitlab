@@ -40,3 +40,11 @@ do
     mkdir -p "${dir}"
     chmod u+rwX "${dir}"
 done
+
+# Generating key and self-signed certificate for container registry.
+if [[ "${GITLAB_REGISTRY_ENABLED}" == "true" && ! -f "${certs_dir}/registry-auth.crt" ]]; then
+    mkdir -p "${GITLAB_DATA_DIR}/certs"
+    cd "${GITLAB_DATA_DIR}/certs"
+    openssl req -nodes -newkey rsa:2048 -keyout registry-auth.key -out registry-auth.csr -subj "/CN=gitlab-issuer"
+    openssl x509 -in registry-auth.csr -out registry-auth.crt -req -signkey registry-auth.key -days 3650
+fi
