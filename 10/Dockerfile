@@ -26,6 +26,7 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_LFS_OBJECTS_DIR="${GITLAB_DATA_DIR}/shared/lfs-objects" \
     GITLAB_PAGES_DIR="${GITLAB_DATA_DIR}/shared/pages" \
     GITLAB_REGISTRY_DIR="${GITLAB_DATA_DIR}/shared/registry" \
+    GITLAB_REGISTRY_CERTS_DIR="${GITLAB_DATA_DIR}/certs" \
 
     GITLAB_URL="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
     GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz" \
@@ -181,7 +182,8 @@ RUN set -xe && \
         "${GITLAB_ARTIFACTS_DIR}" \
         "${GITLAB_LFS_OBJECTS_DIR}" \
         "${GITLAB_PAGES_DIR}" \
-        "${GITLAB_REGISTRY_DIR}" && \
+        "${GITLAB_REGISTRY_DIR}" \
+        "${GITLAB_REGISTRY_CERTS_DIR}" && \
 
     chown -R git:git "${GITLAB_DATA_DIR}" && \
 

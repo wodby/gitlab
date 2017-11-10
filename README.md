@@ -86,13 +86,13 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 | GITLAB_PAGES_HOST                         | pages.example.com                     |              |
 | GITLAB_PAGES_HTTPS                        | false                                 |              |
 | GITLAB_PAGES_PORT                         | 80                                    |              |
-| GITLAB_REGISTRY_API_URL                   | http://localhost:5000/                |              |
+| GITLAB_REGISTRY_API_URL                   | http://docker-registry:5000/          |              |
 | GITLAB_REGISTRY_ENABLED                   | false                                 |              |
 | GITLAB_REGISTRY_HOST                      |                                       |              |
 | GITLAB_REGISTRY_ISSUER                    | gitlab-issuer                         |              |
-| GITLAB_REGISTRY_KEY                       |                                       |              |
+| GITLAB_REGISTRY_KEY                       | /mnt/data/certs/registry-auth.key     |              |
 | GITLAB_REGISTRY_PATH                      | shared/registry                       |              |
-| GITLAB_REGISTRY_PORT                      | 5005                                  |              |
+| GITLAB_REGISTRY_PORT                      | 80                                    |              |
 | GITLAB_ROOT_EMAIL                         |                                       |              |
 | GITLAB_ROOT_PASSWORD                      | 80                                    |              |
 | GITLAB_SECRETS_DB_KEY_BASE                |                                       |              |
