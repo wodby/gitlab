@@ -230,7 +230,9 @@ services:
     image: registry:2
     depends_on:
       - gitlab
-#    environment:
+    environment:
+      REGISTRY_STORAGE_CACHE_BLOBDESCRIPTOR: redis
+      REGISTRY_REDIS_ADDR: redis:6379
 #      REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /mnt/data/certs/registry-auth.crt
 #      REGISTRY_AUTH_TOKEN_REALM: http://gitlab/jwt/auth
 #      REGISTRY_AUTH_TOKEN_SERVICE: container_registry
