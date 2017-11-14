@@ -195,10 +195,10 @@ RUN set -xe && \
 
     # Clean up
     apk del --purge .gitlab-build-deps && \
-#    rm -rf ${GITLAB_DIR}/node_modules && \
+    rm -rf ${GITLAB_DIR}/node_modules && \
     rm -rf /tmp/*
 
-#ENV EXECJS_RUNTIME "Disabled"
+ENV EXECJS_RUNTIME "Disabled"
 
 VOLUME ${GITLAB_DATA_DIR}
 

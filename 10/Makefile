@@ -1,6 +1,6 @@
 -include env_make
 
-GITLAB_VER ?= 10.1.2
+GITLAB_VER ?= 10.1.3
 TAG ?= 10.1
 
 REPO = wodby/gitlab
