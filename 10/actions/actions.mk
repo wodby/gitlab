@@ -1,4 +1,4 @@
-.PHONY: init-data-dir init-db backup restore check-ready check-live
+.PHONY: init-data-dir init-db backup restore check-ready check-live gitlab-readiness
 
 check_defined = \
     $(strip $(foreach 1,$1, \
@@ -32,6 +32,9 @@ check-ready:
 	# Health check on application server without initialized db breaks the app.
 	@echo "OK"
 
-readiness:
+check-live:
+	@echo "OK"
+
+gitlab-readiness:
 	# Instead check for GitLab app readiness.
 	wait-for.sh "$(command)" "GitLab" $(host) $(max_try) $(wait_seconds) $(delay_seconds)
