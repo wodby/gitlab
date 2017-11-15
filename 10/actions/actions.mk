@@ -11,8 +11,7 @@ host ?= localhost
 max_try ?= 1
 wait_seconds ?= 1
 delay_seconds ?= 0
-# Do not make requests until the initial setup (db init).
-command ?= [[ -f ${GITLAB_TEMP_DIR}/VERSION ]] && curl -s -o /dev/null -I -w '%{http_code}' ${host}:8080 | grep -q 302
+command ?= nc -z ${host} 8080
 
 default: check-ready
 

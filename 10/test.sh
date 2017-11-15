@@ -17,11 +17,9 @@ docker-compose -f test/docker-compose.yml up -d
 run_action redis check-ready max_try=10
 run_action nginx check-ready max_try=10
 run_action postgres check-ready wait_seconds=3 max_try=10
+run_action gitlab check-ready wait_seconds=5 max_try=20
 
 run_action gitlab init-data-dir
 run_action gitlab init-db
-
-# Health check pass only after the initial setup.
-run_action gitlab check-ready wait_seconds=5 max_try=10
 
 docker-compose -f test/docker-compose.yml down
