@@ -11,7 +11,7 @@ host ?= localhost
 max_try ?= 1
 wait_seconds ?= 1
 delay_seconds ?= 0
-command ?= nc -z ${host} 8080
+command ?= curl -s ${host}:8080/-/readiness | grep -qvP '\"status\":(?!\"ok\")'
 
 default: check-ready
 
@@ -29,7 +29,9 @@ restore:
 	restore.sh $(timestamp)
 
 check-ready:
-	wait-for.sh "$(command)" "Unicorn" $(host) $(max_try) $(wait_seconds) $(delay_seconds)
-
-check-live:
+	# Health check on application server without initialized db breaks the app.
 	@echo "OK"
+
+readiness:
+	# Instead check for GitLab app readiness.
+	wait-for.sh "$(command)" "GitLab" $(host) $(max_try) $(wait_seconds) $(delay_seconds)

@@ -46,6 +46,7 @@ RUN set -xe && \
 
     apk add --update --no-cache --virtual .gitlab-rundeps \
         git \
+        grep \
         icu-libs \
         libc6-compat \
         libre2 \
