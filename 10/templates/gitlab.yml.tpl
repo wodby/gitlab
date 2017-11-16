@@ -4,6 +4,7 @@ production: &base
     port: {{ getenv "GITLAB_PORT" "80" }}
     https: {{ getenv "GITLAB_HTTPS" "false" }}
     trusted_proxies:
+      - 172.17.0.0/16
     email_enabled: {{ getenv "GITLAB_EMAIL_ENABLED" "true" }}
     email_from: {{ getenv "GITLAB_EMAIL_FROM" "gitlab@example.com" }}
     email_display_name: {{ getenv "GITLAB_EMAIL_DISPLAY_NAME" "GitLab" }}
@@ -169,6 +170,7 @@ production: &base
   monitoring:
     ip_whitelist:
       - 127.0.0.0/8
+      - 172.17.0.0/16
 
     sidekiq_exporter:
 

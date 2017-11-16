@@ -61,9 +61,9 @@ services:
       - gitaly
     env_file:
       - gitlab.env
-#    environment:
-#      DEBUG: 1
-#      GITLAB_LOG_LEVEL: debug
+    environment:
+      DEBUG: 1
+      GITLAB_LOG_LEVEL: debug
     expose:
       - "8080"
     volumes:
