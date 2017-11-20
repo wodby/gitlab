@@ -63,7 +63,7 @@ services:
       - gitlab.env
     environment:
       DEBUG: 1
-      GITLAB_LOG_LEVEL: debug
+#      GITLAB_LOG_LEVEL: debug
     expose:
       - "8080"
     volumes:

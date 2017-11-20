@@ -49,11 +49,19 @@ process_templates() {
     exec_tpl "gitlab-shell.yml.tpl" "${GITLAB_SHELL_DIR}/config.yml"
     exec_tpl "workhorse.toml.tpl" "${GITLAB_DIR}/workhorse.toml"
 
-    exec_tpl "init.d/gitaly.tpl" "/etc/init.d/gitaly"
-    exec_tpl "init.d/mailroom.tpl" "/etc/init.d/mailroom"
-    exec_tpl "init.d/pages.tpl" "/etc/init.d/pages"
-    exec_tpl "init.d/sidekiq.tpl" "/etc/init.d/sidekiq"
-    exec_tpl "init.d/workhorse.tpl" "/etc/init.d/workhorse"
+    declare -a services=(
+        unicorn
+        gitaly
+        mailroom
+        sidekiq
+        workhorse
+        pages
+    )
+
+    for svc in "${services[@]}"; do
+        exec_tpl "init.d/${svc}.tpl" "/etc/init.d/${svc}"
+        chmod +x "/etc/init.d/${svc}"
+    done
 }
 
 process_secrets() {
@@ -72,8 +80,6 @@ sudo fix-permissions.sh git git "${GITLAB_DATA_DIR}"
 
 process_templates
 process_secrets
-
-chmod +x /etc/init.d/gitaly /etc/init.d/mailroom /etc/init.d/sidekiq /etc/init.d/workhorse /etc/init.d/pages
 
 mkdir -p "${GITLAB_REPOS_DIR}"
 

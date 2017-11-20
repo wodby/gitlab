@@ -21,6 +21,8 @@ run_action postgres check-ready wait_seconds=3 max_try=10
 run_action gitlab init-data-dir
 run_action gitlab init-db
 
-run_action gitlab gitlab-readiness max_try=20
+# Readiness health check fails for some reason https://gitlab.com/gitlab-org/gitlab-ce/issues/40225
+#run_action gitlab gitlab-readiness max_try=20
+run_action gitlab gitlab-liveness max_try=20
 
 docker-compose -f test/docker-compose.yml down

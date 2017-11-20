@@ -6,7 +6,7 @@ if [[ -n "${DEBUG}" ]]; then
     set -x
 fi
 
-exec gitlab-workhorse \
+gitlab-workhorse \
   -listenUmask 0 \
   -listenNetwork tcp \
   -listenAddr "0.0.0.0:8181" \

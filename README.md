@@ -1,4 +1,4 @@
-# Gitlab CE Docker Container Image 
+# GitДab CE Docker Container Image 
 
 [![Build Status](https://travis-ci.org/wodby/gitlab.svg?branch=master)](https://travis-ci.org/wodby/gitlab)
 [![Docker Pulls](https://img.shields.io/docker/pulls/wodby/gitlab.svg)](https://hub.docker.com/r/wodby/gitlab)
@@ -14,10 +14,9 @@
 
 For better reliability we release images with stability tags (`wodby/gitlab:10.1-X.X.X`) which correspond to git tags. We **strongly recommend** using images only with stability tags. Below listed basic tags:
 
-| Image tag (Dockerfile)                                                      | Gitlab |
-| --------------------------------------------------------------------------- | ------ |
-| [10, 10.1 (latest)](https://github.com/wodby/gitlab/tree/master/Dockerfile) | 10.1.2 |
-| [10.0](https://github.com/wodby/gitlab/tree/master/Dockerfile)              | 10.0.6 |
+| Image tag (Dockerfile)                                                              | GitLab |
+| ----------------------------------------------------------------------------------- | ------ |
+| [10, 10.1, 10.1.4 (latest)](https://github.com/wodby/gitlab/tree/master/Dockerfile) | 10.1.4 |
 
 ## Environment Variables
 
@@ -131,6 +130,8 @@ commands:
     backup [skip]
     restore timestamp
     check-ready [host max_try wait_seconds delay_seconds]
+    gitlab-readiness [host max_try wait_seconds delay_seconds]
+    gitlab-liveness [host max_try wait_seconds delay_seconds]
  
 default params values:
     host localhost

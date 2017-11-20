@@ -1,4 +1,4 @@
-.PHONY: init-data-dir init-db backup restore check-ready check-live gitlab-readiness
+.PHONY: init-data-dir init-db backup restore check-ready check-live gitlab-readiness gitlab-liveness
 
 check_defined = \
     $(strip $(foreach 1,$1, \
@@ -11,7 +11,8 @@ host ?= localhost
 max_try ?= 1
 wait_seconds ?= 1
 delay_seconds ?= 0
-command ?= curl -s ${host}:8080/-/readiness | grep -qvP '\"status\":(?!\"ok\")'
+gitlab_readiness_cmd ?= curl -s ${host}:8080/-/readiness | grep -qvP '\"status\":(?!\"ok\")'
+gitlab_liveness_cmd ?= curl -s ${host}:8080/-/liveness | grep -qvP '\"status\":(?!\"ok\")'
 
 default: check-ready
 
@@ -36,5 +37,7 @@ check-live:
 	@echo "OK"
 
 gitlab-readiness:
-	# Instead check for GitLab app readiness.
-	wait-for.sh "$(command)" "GitLab" $(host) $(max_try) $(wait_seconds) $(delay_seconds)
+	wait-for.sh "$(gitlab_readiness_cmd)" "GitLab" $(host) $(max_try) $(wait_seconds) $(delay_seconds)
+
+gitlab-liveness:
+	wait-for.sh "$(gitlab_liveness_cmd)" "GitLab" $(host) $(max_try) $(wait_seconds) $(delay_seconds)

@@ -213,4 +213,4 @@ USER git
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["bundle", "exec", "unicorn_rails", "-c", "config/unicorn.rb", "-E", "production"]
+CMD ["/etc/init.d/unicorn"]
