@@ -26,7 +26,7 @@ HostKey {{ $keys_dir }}/ssh_host_ed25519_key
 
 # Logging
 #SyslogFacility AUTH
-LogLevel {{ getenv "SSHD_LOG_LEVEL" "INFO" }}
+LogLevel {{ getenv "SSHD_LOG_LEVEL" "VERBOSE" }}
 
 # Authentication:
 
