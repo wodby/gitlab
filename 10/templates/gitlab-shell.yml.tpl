@@ -14,6 +14,6 @@ redis:
   database: 0
   namespace: resque:gitlab
 log_file: "/proc/self/fd/2"
-log_level: {{ getenv "GITLAB_SHELL_LOG_LEVEL" "INFO" }}
+log_level: {{ getenv "GITLAB_SHELL_LOG_LEVEL" "WARN" }}
 audit_usernames: {{ getenv "GITLAB_SHELL_AUDIT_USERNAMES" "false" }}
 git_trace_log_file:
