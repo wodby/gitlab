@@ -47,6 +47,7 @@ mkdir -p "${GITLAB_REGISTRY_CERTS_DIR}"
 if [[ "${GITLAB_REGISTRY_ENABLED}" == "true" && ! -f "${GITLAB_REGISTRY_CERTS_DIR}/registry-auth.crt" ]]; then
     subj="/CN=${GITLAB_REGISTRY_ISSUER:-gitlab-issuer}"
 
+    sudo fix-permissions.sh git git "${GITLAB_REGISTRY_CERTS_DIR}"
     cd "${GITLAB_REGISTRY_CERTS_DIR}"
     openssl req -nodes -newkey rsa:2048 -keyout registry-auth.key -out registry-auth.csr -subj "${subj}"
     openssl x509 -in registry-auth.csr -out registry-auth.crt -req -signkey registry-auth.key -days 3650

@@ -67,7 +67,7 @@ production: &base
   registry:
     enabled: {{ getenv "GITLAB_REGISTRY_ENABLED" "false" }}
     host: {{ getenv "GITLAB_REGISTRY_HOST" }}
-    port: {{ getenv "GITLAB_REGISTRY_PORT" "80" }}
+    port: {{ getenv "GITLAB_REGISTRY_PORT" "443" }}
     api_url: {{ getenv "GITLAB_REGISTRY_API_URL" "http://docker-registry:5000/" }}
     key: {{ getenv "GITLAB_REGISTRY_KEY" "/mnt/data/certs/registry-auth.key" }}
     path: {{ getenv "GITLAB_REGISTRY_PATH" "shared/registry" }}
