@@ -11,7 +11,7 @@ env:
     - DOCKER_VERSION=17.06.2
     - LATEST_TAG=10
   matrix:
-    - MAJOR_VER=10 MINOR_VER=10.1
+    - MAJOR_VER=10 MINOR_VER=10.2
 
 install:
   - sudo apt-get update
@@ -31,12 +31,12 @@ after_success: |
 
     make release
     make release TAG="${MINOR_VER}"
-    make release TAG="${MAJOR_VER}"
 
     if [[ -n "${TRAVIS_TAG}" ]]; then
       make release TAG="${TAG}-${TRAVIS_TAG}"
     elif [[ "${TAG}" == "${LATEST_TAG}" ]]; then
       make release TAG="latest"
+      make release TAG="${MAJOR_VER}"
     fi
   fi
 

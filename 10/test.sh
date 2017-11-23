@@ -23,6 +23,6 @@ run_action gitlab init-db
 
 # Readiness health check fails for some reason https://gitlab.com/gitlab-org/gitlab-ce/issues/40225
 #run_action gitlab gitlab-readiness max_try=20
-run_action gitlab gitlab-liveness max_try=20
+run_action gitlab gitlab-liveness wait_seconds=3 max_try=10
 
 docker-compose -f test/docker-compose.yml down
