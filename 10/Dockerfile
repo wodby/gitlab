@@ -199,7 +199,8 @@ RUN set -xe && \
     # Clean up
     apk del --purge .gitlab-build-deps && \
     rm -rf ${GITLAB_DIR}/node_modules && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* && \
+    rm -rf /var/cache/apk/*
 
 ENV EXECJS_RUNTIME "Disabled"
 
