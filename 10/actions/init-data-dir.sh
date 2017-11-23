@@ -11,7 +11,11 @@ chmod 755 "${GITLAB_DATA_DIR}"
 
 # Public
 mkdir -p "${GITLAB_PUBLIC_DIR}"
-rsync -rlt "${GITLAB_DIR}/orig_public/" "${GITLAB_PUBLIC_DIR}"
+
+# Sync public dir only for the first run.
+if [[ ! -f "${GITLAB_PUBLIC_DIR}/assets" ]]; then
+    rsync -rlt "${GITLAB_DIR}/orig_public/" "${GITLAB_PUBLIC_DIR}"
+fi
 
 # Uploads
 mkdir -p "${GITLAB_PUBLIC_DIR}/uploads"
