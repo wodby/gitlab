@@ -59,7 +59,8 @@ RUN set -xe && \
         rsync \
         su-exec \
         sudo \
-        tzdata && \
+        tzdata \
+        zip && \
 
     apk add --update --no-cache --virtual .gitlab-build-deps \
         autoconf \
