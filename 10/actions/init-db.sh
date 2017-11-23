@@ -87,12 +87,12 @@ if [[ "${GITLAB_VER}" != "${cached_gitlab_ver}" ]]; then
             echo "  Only upgrades are allowed. Please use ${cached_gitlab_ver} or higher."
             echo "  Cannot continue. Aborting!"
             echo
+
+            exit 1
         else
             echo "Migrating database..."
             bundle exec rake db:migrate >/dev/null
         fi
-
-        return 1
     fi
 
     if [[ "${DB_ADAPTER}" == mysql2 ]]; then
