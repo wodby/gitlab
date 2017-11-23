@@ -138,7 +138,9 @@ RUN set -xe && \
     # Install workhorse
     cd ${GITLAB_DIR} && \
     su-exec git bundle exec rake "gitlab:workhorse:install[/tmp/workhorse]" && \
-    mv /tmp/workhorse/gitlab-workhorse /usr/local/bin && \
+    cd /tmp/workhorse/ && \
+    mv gitlab-workhorse gitlab-zip-cat gitlab-zip-metadata /usr/local/bin/ && \
+    cd ${GITLAB_DIR} && \
 
     # Install gitaly (build gems from source)
     chown -R git $(go env GOROOT)/pkg && \
