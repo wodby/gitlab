@@ -17,6 +17,7 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 | Image tag (Dockerfile)                                                              | GitLab |
 | ----------------------------------------------------------------------------------- | ------ |
 | [10, 10.2, 10.2.1 (latest)](https://github.com/wodby/gitlab/tree/master/Dockerfile) | 10.2.1 |
+| [10, 10.1, 10.1.4](https://github.com/wodby/gitlab/tree/master/Dockerfile)          | 10.1.4 |
 
 ## Environment Variables
 

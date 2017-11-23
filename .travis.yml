@@ -11,7 +11,8 @@ env:
     - DOCKER_VERSION=17.06.2
     - LATEST_VER=10.2
   matrix:
-    - MAJOR_VER=10 MINOR_VER=10.2 LATEST_MAJOR=1
+    - MAJOR_VER=10 MINOR_VER=10.2
+    - MAJOR_VER=10 MINOR_VER=10.1 GITLAB_VER=10.1.4
 
 install:
   - sudo apt-get update
@@ -32,7 +33,7 @@ after_success: |
     make release
     make release TAG="${MINOR_VER}"
 
-    [[ -n "${LATEST_MAJOR}" ]] && make release TAG="${MAJOR_VER}"
+    [[ -z "${GITLAB_VER}" ]] && make release TAG="${MAJOR_VER}"
 
     if [[ -n "${TRAVIS_TAG}" ]]; then
       make release TAG="${TAG}-${TRAVIS_TAG}"
