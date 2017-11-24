@@ -1,4 +1,4 @@
-# GitДab CE Docker Container Image 
+# GitLab CE Docker Container Image 
 
 [![Build Status](https://travis-ci.org/wodby/gitlab.svg?branch=master)](https://travis-ci.org/wodby/gitlab)
 [![Docker Pulls](https://img.shields.io/docker/pulls/wodby/gitlab.svg)](https://hub.docker.com/r/wodby/gitlab)

@@ -42,6 +42,7 @@ production: &base
     host: {{ getenv "GITLAB_PAGES_HOST" "pages.example.com" }}
     port: {{ getenv "GITLAB_PAGES_PORT" "80" }}
     https: {{ getenv "GITLAB_PAGES_HTTPS" "false" }}
+    artifacts_server: true
 
   mattermost:
     enabled: false
