@@ -33,6 +33,7 @@ production: &base
 
   artifacts:
     enabled: {{ getenv "GITLAB_ARTIFACTS_ENABLED" "true" }}
+    path: {{ getenv "GITLAB_ARTIFACTS_DIR" }}
 
   lfs:
     enabled: {{ getenv "GITLAB_LFS_ENABLED" "true" }}

@@ -65,7 +65,7 @@ services:
       - gitlab.env
     environment:
       DEBUG: 1
-      GITLAB_LOG_LEVEL: debug
+#      GITLAB_LOG_LEVEL: debug
     expose:
       - "8080"
     volumes:
@@ -143,14 +143,17 @@ services:
 #    volumes:
 #      - data:/mnt/data
 
-#  runner:
-#    image: wodby/gitlab-runner
-#    depends_on:
-#      - gitlab
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-##      - ./config.toml:/etc/gitlab-runner/config.toml
-#      - data:/mnt/data
+  runner:
+    image: wodby/gitlab-runner
+    environment:
+      CI_SERVER_URL: http://gitlab.loc/
+#      REGISTRATION_TOKEN: Zdrw89f2qSmxp_szkfxj
+    external_links:
+     - nginx:gitlab.loc
+    depends_on:
+      - gitlab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   data:
