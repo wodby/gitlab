@@ -39,6 +39,7 @@ production: &base
 
   pages:
     enabled: {{ getenv "GITLAB_PAGES_ENABLED" "false" }}
+    path: {{ getenv "GITLAB_PAGES_DIR" }}
     host: {{ getenv "GITLAB_PAGES_HOST" "pages.example.com" }}
     port: {{ getenv "GITLAB_PAGES_PORT" "80" }}
     https: {{ getenv "GITLAB_PAGES_HTTPS" "false" }}
