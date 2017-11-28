@@ -81,9 +81,10 @@ For better reliability we release images with stability tags (`wodby/gitlab:10.1
 | GITLAB_LDAP_VERIFY_CERTIFICATES           | true                                  |              |
 | GITLAB_LFS_ENABLED                        | true                                  |              |
 | GITLAB_LOG_LEVEL                          | info                                  |              |
-| GITLAB_PAGES_DOMAIN                       |                                       |              |
 | GITLAB_PAGES_ENABLED                      | false                                 |              |
-| GITLAB_PAGES_HOST                         | pages.example.com                     |              |
+| GITLAB_PAGES_EXTERNAL_HTTP                |                                       |              |
+| GITLAB_PAGES_EXTERNAL_HTTPS               |                                       |              |
+| GITLAB_PAGES_HOST                         |                                       |              |
 | GITLAB_PAGES_HTTPS                        | false                                 |              |
 | GITLAB_PAGES_PORT                         | 80                                    |              |
 | GITLAB_REGISTRY_API_URL                   | http://docker-registry:5000/          |              |
