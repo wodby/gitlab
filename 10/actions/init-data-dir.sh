@@ -9,17 +9,9 @@ fi
 echo "Initializing data dir..."
 chmod 755 "${GITLAB_DATA_DIR}"
 
-# Public
-mkdir -p "${GITLAB_PUBLIC_DIR}"
-
-# Sync public dir only for the first run.
-if [[ ! -f "${GITLAB_PUBLIC_DIR}/assets" ]]; then
-    rsync -rlt "${GITLAB_DIR}/orig_public/" "${GITLAB_PUBLIC_DIR}"
-fi
-
 # Uploads
-mkdir -p "${GITLAB_PUBLIC_DIR}/uploads"
-chmod 0700 "${GITLAB_PUBLIC_DIR}/uploads"
+mkdir -p "${GITLAB_UPLOADS_DIR}"
+chmod 0700 "${GITLAB_UPLOADS_DIR}"
 
 # Repositories
 mkdir -p "${GITLAB_REPOS_DIR}"

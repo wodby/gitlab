@@ -33,14 +33,12 @@ production: &base
 
   artifacts:
     enabled: {{ getenv "GITLAB_ARTIFACTS_ENABLED" "true" }}
-    path: {{ getenv "GITLAB_ARTIFACTS_DIR" }}
 
   lfs:
     enabled: {{ getenv "GITLAB_LFS_ENABLED" "true" }}
 
   pages:
     enabled: {{ getenv "GITLAB_PAGES_ENABLED" "false" }}
-    path: {{ getenv "GITLAB_PAGES_DIR" }}
     host: {{ getenv "GITLAB_PAGES_HOST" }}
     port: {{ getenv "GITLAB_PAGES_PORT" "80" }}
     https: {{ getenv "GITLAB_PAGES_HTTPS" "false" }}

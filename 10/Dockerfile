@@ -14,7 +14,7 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_BACKUP_DIR="${GITLAB_DATA_DIR}/backups" \
     GITLAB_REPOS_DIR="${GITLAB_DATA_DIR}/repositories" \
     GITLAB_BUILDS_DIR="${GITLAB_DATA_DIR}/builds" \
-    GITLAB_PUBLIC_DIR="${GITLAB_DATA_DIR}/public" \
+    GITLAB_UPLOADS_DIR="${GITLAB_DATA_DIR}/uploads" \
 
     # Temporary
     GITLAB_TEMP_DIR="${GITLAB_DATA_DIR}/tmp" \
@@ -179,7 +179,7 @@ RUN set -xe && \
         "${GITLAB_BACKUP_DIR}" \
         "${GITLAB_REPOS_DIR}" \
         "${GITLAB_BUILDS_DIR}" \
-        "${GITLAB_PUBLIC_DIR}" \
+        "${GITLAB_UPLOADS_DIR}" \
         "${GITLAB_TEMP_DIR}" \
         "${GITLAB_DOWNLOADS_DIR}" \
         "${GITLAB_SHARED_DIR}" \
@@ -191,11 +191,10 @@ RUN set -xe && \
 
     chown -R git:git "${GITLAB_DATA_DIR}" && \
 
-    mv "${GITLAB_DIR}/public" "${GITLAB_DIR}/orig_public" && \
     rm -rf "${GITLAB_DIR}/shared" "${GITLAB_DIR}/builds" && \
     su-exec git ln -sf "${GITLAB_SHARED_DIR}" "${GITLAB_DIR}/shared" && \
     su-exec git ln -sf "${GITLAB_BUILDS_DIR}" "${GITLAB_DIR}/builds" && \
-    su-exec git ln -sf "${GITLAB_PUBLIC_DIR}" "${GITLAB_DIR}/public" && \
+    su-exec git ln -sf "${GITLAB_UPLOADS_DIR}" "${GITLAB_DIR}/public/uploads" && \
 
     # Clean up
     apk del --purge .gitlab-build-deps && \
