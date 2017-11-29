@@ -98,6 +98,7 @@ Supported tags and respective `Dockerfile` links:
 | GITLAB_ROOT_PASSWORD                      | 80                                    |              |
 | GITLAB_SECRETS_DB_KEY_BASE                |                                       |              |
 | GITLAB_SECRETS_OTP_KEY_BASE               |                                       |              |
+| GITLAB_SECRETS_OPENID_CONNECT_SIGNING_KEY |                                       |              |
 | GITLAB_SECRETS_SECRET_KEY_BASE            |                                       |              |
 | GITLAB_SECRETS_SHELL                      |                                       |              |
 | GITLAB_SECRETS_WORKHORSE                  |                                       |              |
