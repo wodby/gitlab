@@ -8,7 +8,7 @@ NAME = gitlab-$(GITLAB_VER)
 
 ifneq ($(STABILITY_TAG),)
 ifneq ($(TAG),latest)
-	override TAG := $(TAG)-$(STABILITY_TAG)
+    override TAG := $(TAG)-$(STABILITY_TAG)
 endif
 endif
 
