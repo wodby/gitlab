@@ -11,8 +11,8 @@ env:
     - DOCKER_VERSION=17.06.2
     - LATEST_TAG=10.2
   matrix:
-    - TAG=10.2
-    - TAG=10.1 GITLAB_VER=10.1.4
+    - MAJOR_VER=10 TAG=10.2
+    - MAJOR_VER=10 TAG=10.1 GITLAB_VER=10.1.4
 
 install:
   - sudo apt-get update
@@ -35,6 +35,10 @@ after_success: |
     fi
 
     make release
+
+    if [[ -z "${GITLAB_VER}" ]]; then
+      make release TAG="${MAJOR_VER}"
+    fi
 
     if [[ "${TAG}" == "${LATEST_TAG}" ]]; then
       make release TAG="latest"

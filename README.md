@@ -14,8 +14,8 @@
 
 Supported tags and respective `Dockerfile` links:
 
-* `10.2`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/Dockerfile)
-* `10.1` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/Dockerfile)
+* `10.2`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
+* `10.1` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 
 For better reliability we additionally release images with stability tags (`wodby/gitlab:10.1-X.X.X`) which correspond to git tags. We **strongly recommend** using images only with stability tags.
 
