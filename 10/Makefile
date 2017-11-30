@@ -7,7 +7,9 @@ REPO = wodby/gitlab
 NAME = gitlab-$(GITLAB_VER)
 
 ifneq ($(STABILITY_TAG),)
-    override TAG := $(TAG)-$(STABILITY_TAG)
+ifneq ($(TAG),latest)
+	override TAG := $(TAG)-$(STABILITY_TAG)
+endif
 endif
 
 .PHONY: build test push shell run start stop logs clean release
