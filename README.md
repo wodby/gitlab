@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/wodby/gitlab.svg?branch=master)](https://travis-ci.org/wodby/gitlab)
 [![Docker Pulls](https://img.shields.io/docker/pulls/wodby/gitlab.svg)](https://hub.docker.com/r/wodby/gitlab)
 [![Docker Stars](https://img.shields.io/docker/stars/wodby/gitlab.svg)](https://hub.docker.com/r/wodby/gitlab)
+[![Docker Layers](https://images.microbadger.com/badges/image/wodby/gitlab.svg)](https://microbadger.com/images/wodby/gitlab)
 [![Wodby Slack](http://slack.wodby.com/badge.svg)](http://slack.wodby.com)
 
 ## Docker Images
@@ -14,10 +15,10 @@
 
 Supported tags and respective `Dockerfile` links:
 
-* `10.2`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
+* `10`, `10.2`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 * `10.1` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 
-For better reliability we additionally release images with stability tags (`wodby/gitlab:10.1-X.X.X`) which correspond to git tags. We **strongly recommend** using images only with stability tags.
+For better reliability we additionally release images with stability tags (`wodby/gitlab:10.1-X.X.X`) which correspond to [git tags](https://github.com/wodby/gitlab/releases). We **strongly recommend** using images only with stability tags.
 
 ## Environment Variables
 

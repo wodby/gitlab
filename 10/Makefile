@@ -1,7 +1,9 @@
 -include env_make
 
 GITLAB_VER ?= 10.2.2
-TAG ?= $(GITLAB_VER)
+
+# Remove minor version
+TAG ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+?')
 
 REPO = wodby/gitlab
 NAME = gitlab-$(GITLAB_VER)
