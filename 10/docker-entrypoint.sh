@@ -37,6 +37,10 @@ init_sshd() {
 }
 
 process_templates() {
+    if [[ -n "${GITLAB_HTTPS}" ]]; then
+        export GITLAB_PORT=443;
+    fi
+
     exec_tpl "gitlab.yml.tpl" "${GITLAB_DIR}/config/gitlab.yml"
     exec_tpl "unicorn.rb.tpl" "${GITLAB_DIR}/config/unicorn.rb"
     exec_tpl "production.rb.tpl" "${GITLAB_DIR}/config/environments/production.rb"
