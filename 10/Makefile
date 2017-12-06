@@ -1,6 +1,6 @@
 -include env_make
 
-GITLAB_VER ?= 10.2.2
+GITLAB_VER ?= 10.2.3
 
 # Remove minor version
 TAG ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+?')
@@ -9,9 +9,9 @@ REPO = wodby/gitlab
 NAME = gitlab-$(GITLAB_VER)
 
 ifneq ($(STABILITY_TAG),)
-ifneq ($(TAG),latest)
-    override TAG := $(TAG)-$(STABILITY_TAG)
-endif
+    ifneq ($(TAG),latest)
+        override TAG := $(TAG)-$(STABILITY_TAG)
+    endif
 endif
 
 .PHONY: build test push shell run start stop logs clean release
