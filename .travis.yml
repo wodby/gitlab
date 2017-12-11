@@ -11,8 +11,8 @@ env:
     - DOCKER_VERSION=17.06.2
     - LATEST_TAG=10.2
   matrix:
-    - TAG=10.2 GITLAB_VER=10.2.3 EXTRA_TAG=10
-    - TAG=10.1 GITLAB_VER=10.1.4
+    - TAG=10.2 GITLAB_VER=10.2.4 EXTRA_TAG=10
+    - TAG=10.1 GITLAB_VER=10.1.5
 
 install:
   - sudo apt-get update
