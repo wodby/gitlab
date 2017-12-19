@@ -1,4 +1,4 @@
-FROM wodby/ruby:2.3.5
+FROM wodby/ruby:2.3.6
 
 ARG GITLAB_VER
 
