@@ -4,6 +4,7 @@ services:
   - docker
 
 env:
+  global:
     - LATEST_TAG=10.2
   matrix:
     - TAG=10.2 GITLAB_VER=10.2.5 EXTRA_TAG=10
