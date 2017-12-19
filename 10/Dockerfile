@@ -159,7 +159,7 @@ RUN set -xe; \
     git config --global repack.writeBitmaps true; \
     \
     # Configure sudoers
-    echo 'git ALL=(root) NOPASSWD: /usr/local/bin/fix-permissions.sh, /usr/sbin/sshd' > tee /etc/sudoers.d/git; \
+    echo 'git ALL=(root) NOPASSWD: /usr/local/bin/fix-permissions.sh, /usr/sbin/sshd' > /etc/sudoers.d/git; \
     \
     rm -rf "/home/git/.ssh"; \
     ln -sf "${GITLAB_DATA_DIR}/.ssh" "/home/git/.ssh"; \
