@@ -33,7 +33,7 @@ services:
       POSTGRES_DB_EXTENSIONS: pg_trgm
 
   redis:
-    image: wodby/redis:4
+    image: wodby/redis:4.0
     environment:
       REDIS_PASSWORD: redispassword
 

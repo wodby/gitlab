@@ -30,7 +30,7 @@ init_sshd() {
         }' > "${ssh_dir}/environment"
 
     if [[ ! -f "${GITLAB_DATA_DIR}/ssh/ssh_rsa_key" ]]; then
-        sudo gen-ssh-keys.sh "rsa dsa ecdsa ed25519" "${GITLAB_DATA_DIR}/ssh"
+        gen-ssh-keys.sh "rsa dsa ecdsa ed25519" "${GITLAB_DATA_DIR}/ssh"
     fi
 
     exec_tpl "sshd_config.tpl" "/etc/ssh/sshd_config"
