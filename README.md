@@ -9,10 +9,10 @@
 ## Table of Contents
 
 * [Docker Images](#docker-images)
+* [Documentation](#documentation)
 * [Environment Variables](#environment-variables)
 * [Orchestration actions](#orchestration-actions)
-* [Deployment via docker-compose](#deployment-via-docker-compose)
-* [One-click Deployment](#one-click-deployment)
+* [Deployment](#deployment)
 
 ## Docker Images
 
@@ -27,6 +27,10 @@ Supported tags and respective `Dockerfile` links:
 * `10.1` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 
 For better reliability we additionally release images with stability tags (`wodby/gitlab:10.1-X.X.X`) which correspond to [git tags](https://github.com/wodby/gitlab/releases). We **strongly recommend** using images only with stability tags.
+
+## Documentation
+
+Full documentation available at https://wodby.com/stacks/gitlab/docs
 
 ## Environment Variables
 
@@ -152,37 +156,6 @@ default params values:
     delay_seconds 0
 ```
 
-## Deployment via docker-compose
+## Deployment
 
-See [`docker-compose.yml`](https://github.com/wodby/gitlab/tree/master/10/test/docker-compose.yml) we use for running tests.
- 
-| Service          | Image                                                         | Mandatory |
-| ---------------- | ------------------------------------------------------------- | --------- |
-| nginx            | [wodby/gitlab-nginx](https://github.com/wodby/gitlab-nginx)   | ✓         |
-| postgres         | [wodby/postgres](https://github.com/wodby/postgres)           | ✓         |
-| redis            | [wodby/redis](https://github.com/wodby/redis)                 | ✓         |
-| gitlab (unicorn) | `wodby/gitlab`                                                | ✓         |
-| workhorse        | `wodby/gitlab`                                                | ✓         |
-| gitaly           | `wodby/gitlab`                                                | ✓         |
-| sidekiq          | `wodby/gitlab`                                                | ✓         |
-| sshd             | `wodby/gitlab`                                                | ✓         |
-| mailroom         | `wodby/gitlab`                                                |           |
-| pages            | `wodby/gitlab`                                                |           |
-| opensmtpd        | [wodby/opensmtpd](https://github.com/wodby/opensmtpd)         |           |
-| registry         | [_/registry](https://hub.docker.com/r/_/registry)             |           |
-| runner           | [wodby/gitlab-runner](https://github.com/wodby/gitlab-runner) |           |
-
-After running the compose file, run the following orchestration actions:
-
-```bash
-# Initialize data directory
-docker-compose exec gitlab make init-data-dir -f /usr/local/bin/actions.mk
-# Initialize / migrate database 
-docker-compose exec gitlab make init-db -f /usr/local/bin/actions.mk
-# Make sure gitlab has started
-docker-compose exec gitlab make gitlab-liveness wait_seconds=3 max_try=10 -f /usr/local/bin/actions.mk
-``` 
-
-## One-click Deployment
-
-Deploy GitLab to your own server via [![Wodby](https://www.google.com/s2/favicons?domain=wodby.com) Wodby](https://wodby.com).
+You can deploy GitLab stack manually via docker-compose as described [here](https://wodby.com/stacks/gitlab/docs) or deploy to your own server via [![Wodby](https://www.google.com/s2/favicons?domain=wodby.com) Wodby](https://wodby.com).
