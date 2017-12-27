@@ -5,9 +5,10 @@ services:
 
 env:
   global:
-    - LATEST_TAG=10.2
+    - LATEST_TAG=10.3
   matrix:
-    - TAG=10.2 GITLAB_VER=10.2.5 EXTRA_TAG=10
+    - TAG=10.3 GITLAB_VER=10.3.0 EXTRA_TAG=10
+    - TAG=10.2 GITLAB_VER=10.2.5
     - TAG=10.1 GITLAB_VER=10.1.5
 
 script:

@@ -158,8 +158,9 @@ production: &base
     path: {{ getenv "GITLAB_SHELL_DIR" }}
     hooks_path: {{ getenv "GITLAB_SHELL_DIR" }}/hooks/
     secret_file: {{ getenv "GITLAB_DIR" }}/.gitlab_shell_secret
-    upload_pack: true
-    receive_pack: true
+    upload_pack: {{ getenv "GITLAB_SHELL_UPLOAD_PACK" "true" }}
+    receive_pack: {{ getenv "GITLAB_SHELL_RECEIVE_PACK" "true" }}
+    git_timeout: {{ getenv "GITLAB_SHELL_GIT_TIMEOUT" "10800" }}
     ssh_port: {{ getenv "GITLAB_SHELL_SSH_PORT" "22" }}
 
   workhorse:

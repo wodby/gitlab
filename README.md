@@ -23,7 +23,8 @@
 
 Supported tags and respective `Dockerfile` links:
 
-* `10`, `10.2`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
+* `10`, `10.3`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
+* `10.2` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 * `10.1` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 
 For better reliability we additionally release images with stability tags (`wodby/gitlab:10.1-X.X.X`) which correspond to [git tags](https://github.com/wodby/gitlab/releases). We **strongly recommend** using images only with stability tags.
@@ -119,6 +120,9 @@ Full documentation available at https://wodby.com/stacks/gitlab/docs
 | GITLAB_SHELL_GITLAB_URL                   | gitlab                                |              |
 | GITLAB_SHELL_LOG_LEVEL                    | INFO                                  |              |
 | GITLAB_SHELL_SSH_PORT                     | 22                                    |              |
+| GITLAB_SHELL_GIT_TIMEOUT                  | 10800                                 |              |
+| GITLAB_SHELL_RECEIVE_PACK                 | true                                  |              |
+| GITLAB_SHELL_UPLOAD_PACK                  | true                                  |              |
 | GITLAB_SMTP_ADDRESS                       |                                       |              |
 | GITLAB_SMTP_DOMAIN                        | gitlab.company.com                    |              |
 | GITLAB_SMTP_PASSWORD                      |                                       |              |
