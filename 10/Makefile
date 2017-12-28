@@ -1,6 +1,6 @@
 -include env_make
 
-GITLAB_VER ?= 10.3.0
+GITLAB_VER ?= 10.3.1
 
 # Remove minor version
 TAG ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+?')
