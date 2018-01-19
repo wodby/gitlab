@@ -47,6 +47,7 @@ if [[ "${GITLAB_VER}" != "${cached_gitlab_ver}" ]]; then
         else
             echo "Migrating database..."
             bundle exec rake db:migrate >/dev/null
+            bundle exec rake cache:clear
         fi
     fi
 
