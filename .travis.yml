@@ -7,9 +7,9 @@ env:
   global:
     - LATEST_TAG=10.3
   matrix:
-    - TAG=10.3 GITLAB_VER=10.3.4 EXTRA_TAG=10
-    - TAG=10.2 GITLAB_VER=10.2.6
-    - TAG=10.1 GITLAB_VER=10.1.6
+    - TAG=10.3 GITLAB_VER=10.3.5 EXTRA_TAG=10
+    - TAG=10.2 GITLAB_VER=10.2.7
+    - TAG=10.1 GITLAB_VER=10.1.7
 
 script:
   - cd ./"${GITLAB_VER:0:2}"
