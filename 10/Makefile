@@ -1,12 +1,12 @@
 -include env_make
 
-GITLAB_VER ?= 10.3.5
+GITLAB_VER ?= 10.4.3
+GITLAB_MINOR_VER ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+')
 
-# Remove minor version
-TAG ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+?')
+TAG ?= $(GITLAB_MINOR_VER)
 
 REPO = wodby/gitlab
-NAME = gitlab-$(GITLAB_VER)
+NAME = gitlab-$(GITLAB_MINOR_VER)
 
 ifneq ($(STABILITY_TAG),)
     ifneq ($(TAG),latest)

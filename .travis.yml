@@ -5,36 +5,21 @@ services:
 
 env:
   global:
-    - LATEST_TAG=10.3
+    - LATEST_TAG=10.4
   matrix:
-    - TAG=10.3 GITLAB_VER=10.3.5 EXTRA_TAG=10
-    - TAG=10.2 GITLAB_VER=10.2.7
-    - TAG=10.1 GITLAB_VER=10.1.7
+    - TAG=10.4 GITLAB_VER=10.4.3 EXTRA_TAG=10
+    - TAG=10.3 GITLAB_VER=10.3.7
+    - TAG=10.2 GITLAB_VER=10.2.8
 
 script:
   - cd ./"${GITLAB_VER:0:2}"
   - make && make test
 
-after_success: |
-  if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ("${TRAVIS_BRANCH}" == "master"  || -n "${TRAVIS_TAG}") ]]; then
-    docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-
-    if [[ -n "${TRAVIS_TAG}" ]]; then
-      export STABILITY_TAG="${TRAVIS_TAG}"
-    fi
-
-    make release
-
-    if [[ -n "${EXTRA_TAG}" ]]; then
-      make release TAG="${EXTRA_TAG}"
-    fi
-
-    if [[ "${TAG}" == "${LATEST_TAG}" ]]; then
-      make release TAG="latest"
-    fi
-  fi
+after_success:
+  - bash "${TRAVIS_BUILD_DIR}/travis-release.sh"
 
 notifications:
   on_failure: never
   slack:
-    secure: "ghPU8CT/vM0kTDjXtMOvTyfJE6rgoh33lbUzQDWFJNntu5XMa6vvf3guGRQFMK/qg+Yvn5Eys40ZXNoj3UtZpcjgJQKigmoW8nleBh/mmlbYVQLCZxrHCKqZ0K96PyhwJpHF7K4tXfVWtTikbd9bD5pMrKtqiGmIJtG8bCr6i8+anoHPsXCUuKpkzn/Yi8B+yGWgVsdVlw3Ay9uRmRmkZnn9lJfysaLGJ6fJlh+xsOZ5X9UhjuGVzoJOt/bI5u6NKN4w0646pq236TsxCFuD9o+JQw6o2za55bamHGvPyr7uv16SKkrhB68zJHrndh0LxV6LP3pjkUDCNWX4woJfge2NtseRMnM+4Mntu4uwi4DIoErlFVmdwPxRaH1f2O1M75Gj8HoD4Eb6uWD2exn91M72x1GwKZ/sI8UywEPF98A/9tD8YMm9BR6yYXt7hc+pM4bshZBX1SEdw/vCE1FCdxoYH5WLpBtqK/WKefgH8nX169g9QIK1EY+GzzJuGbZBElDjlZjm8RJMreYHOQmsvbjQxoOiuJouI/fxwpPTPA9lon2n+YOkwAPLeUm7JJbbDsKZvRZO6E1mvB6srgwKBs58pbQJrYL9K205awZpnEp1rfhUmmIV8Kyy0PJAyDk0SrzMWThTcvMmFWNt08i8i72voHTv+7YdQl2SslkosRw="
+    secure: |
+      ghPU8CT/vM0kTDjXtMOvTyfJE6rgoh33lbUzQDWFJNntu5XMa6vvf3guGRQFMK/qg+Yvn5Eys40ZXNoj3UtZpcjgJQKigmoW8nleBh/mmlbYVQLCZxrHCKqZ0K96PyhwJpHF7K4tXfVWtTikbd9bD5pMrKtqiGmIJtG8bCr6i8+anoHPsXCUuKpkzn/Yi8B+yGWgVsdVlw3Ay9uRmRmkZnn9lJfysaLGJ6fJlh+xsOZ5X9UhjuGVzoJOt/bI5u6NKN4w0646pq236TsxCFuD9o+JQw6o2za55bamHGvPyr7uv16SKkrhB68zJHrndh0LxV6LP3pjkUDCNWX4woJfge2NtseRMnM+4Mntu4uwi4DIoErlFVmdwPxRaH1f2O1M75Gj8HoD4Eb6uWD2exn91M72x1GwKZ/sI8UywEPF98A/9tD8YMm9BR6yYXt7hc+pM4bshZBX1SEdw/vCE1FCdxoYH5WLpBtqK/WKefgH8nX169g9QIK1EY+GzzJuGbZBElDjlZjm8RJMreYHOQmsvbjQxoOiuJouI/fxwpPTPA9lon2n+YOkwAPLeUm7JJbbDsKZvRZO6E1mvB6srgwKBs58pbQJrYL9K205awZpnEp1rfhUmmIV8Kyy0PJAyDk0SrzMWThTcvMmFWNt08i8i72voHTv+7YdQl2SslkosRw=
