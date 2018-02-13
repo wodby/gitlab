@@ -80,7 +80,7 @@ process_secrets() {
     fi
 }
 
-sudo fix-permissions.sh git git "${GITLAB_DATA_DIR}"
+sudo fix-volumes-permissions.sh
 
 process_templates
 process_secrets

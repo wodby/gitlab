@@ -41,6 +41,5 @@ mkdir -p "${GITLAB_REGISTRY_CERTS_DIR}"
 
 # Generating key and self-signed certificate for container registry.
 if [[ "${GITLAB_REGISTRY_ENABLED}" == "true" && ! -f "${GITLAB_REGISTRY_CERTS_DIR}/registry-auth.crt" ]]; then
-    sudo fix-permissions.sh git git "${GITLAB_REGISTRY_CERTS_DIR}"
     gen-ssl-certs.sh "${GITLAB_REGISTRY_CERTS_DIR}" "${GITLAB_REGISTRY_ISSUER:-gitlab-issuer}" "registry-auth"
 fi

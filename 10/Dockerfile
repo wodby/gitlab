@@ -28,14 +28,12 @@ ENV GITLAB_DIR="/home/git/gitlab" \
     GITLAB_REGISTRY_DIR="${GITLAB_DATA_DIR}/shared/registry" \
     GITLAB_REGISTRY_CERTS_DIR="${GITLAB_DATA_DIR}/certs" \
     \
-    GITLAB_URL="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}" \
-    GITLAB_PAGES_URL="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz" \
-    \
-    SSHD_PASSWORD_AUTHENTICATION="no" \
-    SSHD_USE_DNS="no" \
-    SSHD_PERMIT_USER_ENV="yes" \
+    # SSHD
     SSHD_HOST_KEYS_DIR="${GITLAB_DATA_DIR}/ssh" \
-    SSHD_LOG_LEVEL="VERBOSE"
+    SSHD_LOG_LEVEL="VERBOSE" \
+    SSHD_PASSWORD_AUTHENTICATION="no" \
+    SSHD_PERMIT_USER_ENV="yes" \
+    SSHD_USE_DNS="no"
 
 RUN set -xe; \
     \
@@ -44,7 +42,7 @@ RUN set -xe; \
 	sed -i '/^git/s/!/*/' /etc/shadow; \
 	echo "PS1='\w\$ '" >> /home/git/.bashrc; \
     \
-    apk add --update --no-cache --virtual .gitlab-rundeps \
+    apk add --update --no-cache -t .gitlab-rundeps \
         git \
         grep \
         icu-libs \
@@ -62,7 +60,7 @@ RUN set -xe; \
         tzdata \
         zip; \
     \
-    apk add --update --no-cache --virtual .gitlab-build-deps \
+    apk add --update --no-cache -t .gitlab-build-deps \
         autoconf \
         build-base \
         cmake \
@@ -99,7 +97,8 @@ RUN set -xe; \
     \
     # Download gitlab.
     mkdir -p ${GITLAB_DIR}; \
-    wget -qO- ${GITLAB_URL} | tar xz --strip-components=1 -C ${GITLAB_DIR}; \
+    gitlab_url="https://gitlab.com/gitlab-org/gitlab-ce/repository/archive.tar.gz?ref=v${GITLAB_VER}"; \
+    wget -qO- ${gitlab_url} | tar xz --strip-components=1 -C ${GITLAB_DIR}; \
     chown -R git:git ${GITLAB_DIR}; \
     \
     cd ${GITLAB_DIR}; \
@@ -128,7 +127,8 @@ RUN set -xe; \
     \
     # Install gitlab pages.
     gitlab_pages_version=$(cat "${GITLAB_DIR}/GITLAB_PAGES_VERSION"); \
-    wget -qO- "${GITLAB_PAGES_URL}?ref=v${gitlab_pages_version}" | tar xz -C /tmp/; \
+    gitlab_pages_url="https://gitlab.com/gitlab-org/gitlab-pages/repository/archive.tar.gz"; \
+    wget -qO- "${gitlab_pages_url}?ref=v${gitlab_pages_version}" | tar xz -C /tmp/; \
     export GOPATH="/tmp/go"; \
     mkdir -p "/tmp/go/src/gitlab.com/gitlab-org"; \
     ln -s /tmp/gitlab-pages* "$GOPATH/src/gitlab.com/gitlab-org/gitlab-pages"; \
@@ -158,11 +158,15 @@ RUN set -xe; \
     git config --global gc.auto 0; \
     git config --global repack.writeBitmaps true; \
     \
+    # Script to fix volumes permissions via sudo.
+    echo "chown git:git ${GITLAB_DATA_DIR} ${GITLAB_REGISTRY_CERTS_DIR}" > /usr/local/bin/fix-volumes-permissions.sh; \
+    chmod +x /usr/local/bin/fix-volumes-permissions.sh; \
+    \
     # Configure sudoers
     { \
         echo -n 'git ALL=(root) NOPASSWD: ' ; \
         echo -n '/usr/local/bin/gen-ssh-keys.sh, ' ; \
-        echo -n '/usr/local/bin/fix-permissions.sh, ' ; \
+        echo -n '/usr/local/bin/fix-volumes-permissions.sh, ' ; \
         echo '/usr/sbin/sshd' ; \
     } | tee /etc/sudoers.d/git; \
     \
