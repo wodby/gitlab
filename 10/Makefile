@@ -45,4 +45,7 @@ logs:
 clean:
 	-docker rm -f $(NAME)
 
+compare-orig-configs:
+	./compare-orig-configs.sh $(GITLAB_VER)
+
 release: build push
