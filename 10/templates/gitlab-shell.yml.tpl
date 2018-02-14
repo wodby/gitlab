@@ -5,7 +5,6 @@ http_settings:
 auth_file: "/home/git/.ssh/authorized_keys"
 secret_file: "{{ getenv "GITLAB_DIR" }}/.gitlab_shell_secret"
 redis:
-  bin: /usr/bin/redis-cli
   host: {{ getenv "REDIS_HOST" "redis" }}
   port: {{ getenv "REDIS_PORT" "6379" }}
   {{ if getenv "REDIS_PASS" }}
