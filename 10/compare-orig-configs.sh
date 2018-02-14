@@ -33,8 +33,8 @@ for index in "${array[@]}" ; do
     local="${index%%::*}"
     remote="${index##*::}"
 
-    md5_local=$(cat "orig/${local}" | md5)
-    md5_remote=$(wget -qO- "${remote}" | md5)
+    md5_local=$(cat "/orig/${local}" | md5sum)
+    md5_remote=$(wget -qO- "${remote}" | md5sum)
 
     echo "Checking ${local}"
 

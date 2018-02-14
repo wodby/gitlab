@@ -46,6 +46,9 @@ clean:
 	-docker rm -f $(NAME)
 
 compare-orig-configs:
-	./compare-orig-configs.sh $(GITLAB_VER)
+	docker run --rm \
+		-v $(PWD)/compare-orig-configs.sh:/usr/local/bin/compare-orig-configs.sh \
+		-v $(PWD)/orig:/orig \
+		wodby/alpine compare-orig-configs.sh $(GITLAB_VER)
 
 release: build push
