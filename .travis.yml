@@ -8,8 +8,6 @@ env:
     - LATEST_TAG=10.4
   matrix:
     - TAG=10.4 GITLAB_VER=10.4.3 EXTRA_TAG=10
-    - TAG=10.3 GITLAB_VER=10.3.7
-    - TAG=10.2 GITLAB_VER=10.2.8
 
 script:
   - cd ./"${GITLAB_VER:0:2}"

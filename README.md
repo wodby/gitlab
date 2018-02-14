@@ -27,8 +27,6 @@ Overview:
 Supported tags and respective `Dockerfile` links:
 
 * `10`, `10.4`, `latest` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
-* `10.3` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
-* `10.2` [_(Dockerfile)_](https://github.com/wodby/gitlab/tree/master/10/Dockerfile)
 
 ## Documentation
 
