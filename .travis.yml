@@ -10,8 +10,11 @@ env:
     - TAG=10.4 GITLAB_VER=10.4.3 EXTRA_TAG=10
 
 script:
+  - set -e
   - cd ./"${GITLAB_VER:0:2}"
-  - make && make test
+  - make compare-orig-configs
+  - make
+  - make test
 
 after_success:
   - bash "${TRAVIS_BUILD_DIR}/travis-release.sh"
