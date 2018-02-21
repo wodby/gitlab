@@ -7,7 +7,7 @@ env:
   global:
     - LATEST_TAG=10.4
   matrix:
-    - TAG=10.4 GITLAB_VER=10.4.3 EXTRA_TAG=10
+    - TAG=10.4 GITLAB_VER=10.4.4 EXTRA_TAG=10
 
 script:
   - set -e
@@ -17,7 +17,7 @@ script:
   - make test
 
 after_success:
-  - bash "${TRAVIS_BUILD_DIR}/travis-release.sh"
+  - bash "${TRAVIS_BUILD_DIR}/travis_release"
 
 notifications:
   on_failure: never

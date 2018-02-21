@@ -159,14 +159,14 @@ RUN set -xe; \
     git config --global repack.writeBitmaps true; \
     \
     # Script to fix volumes permissions via sudo.
-    echo "chown git:git ${GITLAB_DATA_DIR} ${GITLAB_REGISTRY_CERTS_DIR}" > /usr/local/bin/fix-volumes-permissions.sh; \
-    chmod +x /usr/local/bin/fix-volumes-permissions.sh; \
+    echo "chown git:git ${GITLAB_DATA_DIR} ${GITLAB_REGISTRY_CERTS_DIR}" > /usr/local/bin/init_volumes; \
+    chmod +x /usr/local/bin/init_volumes; \
     \
     # Configure sudoers
     { \
         echo -n 'git ALL=(root) NOPASSWD: ' ; \
         echo -n '/usr/local/bin/gen-ssh-keys.sh, ' ; \
-        echo -n '/usr/local/bin/fix-volumes-permissions.sh, ' ; \
+        echo -n '/usr/local/bin/init_volumes, ' ; \
         echo '/usr/sbin/sshd' ; \
     } | tee /etc/sudoers.d/git; \
     \

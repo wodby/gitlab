@@ -3,7 +3,7 @@ version: '2'
 services:
 
   nginx:
-    image: wodby/gitlab-nginx:1.13
+    image: wodby/gitlab-nginx:10-1.13
     depends_on:
       - workhorse
     ports:

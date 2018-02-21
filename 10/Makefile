@@ -1,6 +1,6 @@
 -include env_make
 
-GITLAB_VER ?= 10.4.3
+GITLAB_VER ?= 10.4.4
 GITLAB_MINOR_VER ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+')
 
 TAG ?= $(GITLAB_MINOR_VER)
@@ -22,7 +22,7 @@ build:
 	docker build -t $(REPO):$(TAG) --build-arg GITLAB_VER=$(GITLAB_VER) ./
 
 test:
-	IMAGE=$(REPO):$(TAG) ./test.sh
+	cd ./test && IMAGE=$(REPO):$(TAG) ./run
 
 push:
 	docker push $(REPO):$(TAG)
@@ -47,8 +47,8 @@ clean:
 
 compare-orig-configs:
 	docker run --rm \
-		-v $(PWD)/compare-orig-configs.sh:/usr/local/bin/compare-orig-configs.sh \
+		-v $(PWD)/compare_orig_configs:/usr/local/bin/compare_orig_configs \
 		-v $(PWD)/orig:/orig \
-		wodby/alpine compare-orig-configs.sh $(GITLAB_VER)
+		wodby/alpine compare_orig_configs $(GITLAB_VER)
 
 release: build push

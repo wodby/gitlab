@@ -80,7 +80,7 @@ process_secrets() {
     fi
 }
 
-sudo fix-volumes-permissions.sh
+sudo init_volumes
 
 process_templates
 process_secrets

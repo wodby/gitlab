@@ -17,17 +17,17 @@ gitlab_liveness_cmd ?= curl -s ${host}:8080/-/liveness | grep -qvP '\"status\":(
 default: check-ready
 
 init-data-dir:
-	init-data-dir.sh
+	init_data_dir
 
 init-db:
-	init-db.sh
+	init_db
 
 backup:
-	backup.sh $(skip)
+	backup $(skip)
 
 restore:
 	$(call check_defined, timestamp)
-	restore.sh $(timestamp)
+	restore $(timestamp)
 
 check-ready:
 	# Health check on application server without initialized db breaks the app.
