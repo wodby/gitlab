@@ -159,7 +159,10 @@ RUN set -xe; \
     git config --global repack.writeBitmaps true; \
     \
     # Script to fix volumes permissions via sudo.
-    echo "chown git:git ${GITLAB_DATA_DIR} ${GITLAB_REGISTRY_CERTS_DIR}" > /usr/local/bin/init_volumes; \
+    { \
+        echo "mkdir -p ${GITLAB_REGISTRY_CERTS_DIR}"; \
+        echo "chown git:git ${GITLAB_DATA_DIR} ${GITLAB_REGISTRY_CERTS_DIR}"; \
+    } | tee /usr/local/bin/init_volumes; \
     chmod +x /usr/local/bin/init_volumes; \
     \
     # Configure sudoers
