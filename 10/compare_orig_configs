@@ -42,7 +42,7 @@ for index in "${array[@]}" ; do
         echo "OK"
     else
         echo "!!! OUTDATED"
-        echo "${remote}"
+        echo "${url}"
         outdated=1
     fi
 
