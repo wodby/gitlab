@@ -5,9 +5,9 @@ services:
 
 env:
   global:
-    - LATEST_TAG=10.4
+    - LATEST_TAG=10.5
   matrix:
-    - TAG=10.4 GITLAB_VER=10.4.4 EXTRA_TAG=10
+    - TAG=10.5 GITLAB_VER=10.5.1 EXTRA_TAG=10
 
 script:
   - set -e
@@ -18,9 +18,3 @@ script:
 
 after_success:
   - bash "${TRAVIS_BUILD_DIR}/travis_release"
-
-notifications:
-  on_failure: never
-  slack:
-    secure: |
-      ghPU8CT/vM0kTDjXtMOvTyfJE6rgoh33lbUzQDWFJNntu5XMa6vvf3guGRQFMK/qg+Yvn5Eys40ZXNoj3UtZpcjgJQKigmoW8nleBh/mmlbYVQLCZxrHCKqZ0K96PyhwJpHF7K4tXfVWtTikbd9bD5pMrKtqiGmIJtG8bCr6i8+anoHPsXCUuKpkzn/Yi8B+yGWgVsdVlw3Ay9uRmRmkZnn9lJfysaLGJ6fJlh+xsOZ5X9UhjuGVzoJOt/bI5u6NKN4w0646pq236TsxCFuD9o+JQw6o2za55bamHGvPyr7uv16SKkrhB68zJHrndh0LxV6LP3pjkUDCNWX4woJfge2NtseRMnM+4Mntu4uwi4DIoErlFVmdwPxRaH1f2O1M75Gj8HoD4Eb6uWD2exn91M72x1GwKZ/sI8UywEPF98A/9tD8YMm9BR6yYXt7hc+pM4bshZBX1SEdw/vCE1FCdxoYH5WLpBtqK/WKefgH8nX169g9QIK1EY+GzzJuGbZBElDjlZjm8RJMreYHOQmsvbjQxoOiuJouI/fxwpPTPA9lon2n+YOkwAPLeUm7JJbbDsKZvRZO6E1mvB6srgwKBs58pbQJrYL9K205awZpnEp1rfhUmmIV8Kyy0PJAyDk0SrzMWThTcvMmFWNt08i8i72voHTv+7YdQl2SslkosRw=

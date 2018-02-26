@@ -37,6 +37,8 @@ production: &base
   lfs:
     enabled: {{ getenv "GITLAB_LFS_ENABLED" "true" }}
 
+  uploads:
+
   pages:
     enabled: {{ getenv "GITLAB_PAGES_ENABLED" "false" }}
     host: {{ getenv "GITLAB_PAGES_HOST" }}
@@ -63,9 +65,10 @@ production: &base
       cron: "20 * * * *"
     admin_email_worker:
       cron: "0 0 * * 0"
-
     repository_archive_cache_worker:
       cron: "0 * * * *"
+    pages_domain_verification_cron_worker:
+      cron: "*/15 * * * *"
 
   registry:
     enabled: {{ getenv "GITLAB_REGISTRY_ENABLED" "false" }}
@@ -107,6 +110,7 @@ production: &base
           name:       'cn'
           first_name: 'givenName'
           last_name:  'sn'
+        lowercase_usernames: false
 
   omniauth:
     enabled: false

@@ -16,35 +16,37 @@ gitaly_ver=$(wget -qO- "${gitlab_url}/GITALY_SERVER_VERSION")
 gitlab_shell_ver=$(wget -qO- "${gitlab_url}/GITLAB_SHELL_VERSION")
 
 array=(
-    "gitlab/database.yml.postgresql::${gitlab_config_url}/database.yml.postgresql"
-    "gitlab/gitlab.yml.example::${gitlab_config_url}/gitlab.yml.example"
-    "gitlab/resque.yml.example::${gitlab_config_url}/resque.yml.example"
-    "gitlab/secrets.yml.example::${gitlab_config_url}/secrets.yml.example"
-    "gitlab/unicorn.rb.example::${gitlab_config_url}/unicorn.rb.example"
-    "gitlab/initializers/smtp_settings.rb.sample::${gitlab_config_url}/initializers/smtp_settings.rb.sample"
-    "gitlab/environments/production.rb::${gitlab_config_url}/environments/production.rb"
-    "gitaly/config.toml.example::${url}/gitaly/raw/v${gitaly_ver}/config.toml.example"
-    "gitlab-shell/config.yml.example::${url}/gitlab-shell/raw/v${gitlab_shell_ver}/config.yml.example"
+    "./orig/gitlab/database.yml.postgresql::${gitlab_config_url}/database.yml.postgresql"
+    "./orig/gitlab/gitlab.yml.example::${gitlab_config_url}/gitlab.yml.example"
+    "./orig/gitlab/resque.yml.example::${gitlab_config_url}/resque.yml.example"
+    "./orig/gitlab/secrets.yml.example::${gitlab_config_url}/secrets.yml.example"
+    "./orig/gitlab/unicorn.rb.example::${gitlab_config_url}/unicorn.rb.example"
+    "./orig/gitlab/initializers/smtp_settings.rb.sample::${gitlab_config_url}/initializers/smtp_settings.rb.sample"
+    "./orig/gitlab/environments/production.rb::${gitlab_config_url}/environments/production.rb"
+    "./orig/gitaly/config.toml.example::${url}/gitaly/raw/v${gitaly_ver}/config.toml.example"
+    "./orig/gitlab-shell/config.yml.example::${url}/gitlab-shell/raw/v${gitlab_shell_ver}/config.yml.example"
 )
 
 outdated=0
 
 for index in "${array[@]}" ; do
     local="${index%%::*}"
-    remote="${index##*::}"
+    url="${index##*::}"
 
-    md5_local=$(cat "/orig/${local}" | md5sum)
-    md5_remote=$(wget -qO- "${remote}" | md5sum)
+    orig="/tmp/${RANDOM}"
+    wget -qO "${orig}" "${url}"
 
     echo "Checking ${local}"
 
-    if [[ "${md5_local}" != "${md5_remote}" ]]; then
-        echo "!!! OUTDATED"
-        echo "SEE ${remote}"
-        outdated=1
-    else
+    if diff --strip-trailing-cr "${local}" "${orig}"; then
         echo "OK"
+    else
+        echo "!!! OUTDATED"
+        echo "${remote}"
+        outdated=1
     fi
+
+    rm -f "${orig}"
 done
 
 [[ "${outdated}" == 0 ]] || exit 1
