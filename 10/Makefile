@@ -1,6 +1,6 @@
 -include env_make
 
-GITLAB_VER ?= 10.5.2
+GITLAB_VER ?= 10.5.6
 GITLAB_MINOR_VER ?= $(shell echo "${GITLAB_VER}" | grep -oE '^[0-9]+\.[0-9]+')
 
 TAG ?= $(GITLAB_MINOR_VER)
