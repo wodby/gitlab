@@ -7,7 +7,7 @@ env:
   global:
     - LATEST_TAG=10.6
   matrix:
-    - TAG=10.6 GITLAB_VER=10.6.0 EXTRA_TAG=10
+    - TAG=10.6 GITLAB_VER=10.6.1 EXTRA_TAG=10
 
 script:
   - set -e
